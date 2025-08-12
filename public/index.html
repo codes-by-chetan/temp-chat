@@ -306,7 +306,7 @@
         if (Notification.permission === "granted") {
           new Notification("New Message", {
             body: `${data.from} : ` + data.text || "You have a new message!",
-            icon: "http://localhost:3001/temp-chat-logo.png", // Optional: Add an icon URL
+            icon: "/temp-chat-logo.png", // Optional: Add an icon URL
           });
         }
       }
@@ -801,6 +801,7 @@
         useEffect(() => {
           usernameRef.current = currentUsername;
           console.log("username changed : ", currentUsername);
+          return;
         }, [currentUsername]);
         useEffect(() => {
           // connect to same origin - ORIGINAL SOCKET.IO LOGIC RESTORED
@@ -844,7 +845,13 @@
 
           sock.on("chatMessage", (msg) => {
             // msg: { from, text, timestamp }
-            addMessage(msg);
+            if (msg.from) {
+              msg["from"] = msg.from === usernameRef.current ? "You" : msg.from;
+            }
+            setMessages((prev) => [
+              ...prev,
+              { id: Date.now() + Math.random(), ...msg },
+            ]);
           });
 
           sock.on("needPasskey", (data) => {
@@ -876,7 +883,6 @@
         useEffect(() => {
           messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
           console.log("current user in messages", currentUsername);
-
           if (messages.length > 0) {
             const lastMessage = messages[messages.length - 1];
             let sanitizedMessage;
@@ -894,6 +900,7 @@
               sendNotification(sanitizedMessage);
             }
           }
+          return;
         }, [messages]);
 
         useEffect(() => {
@@ -930,6 +937,8 @@
             default:
               // default case if needed
               break;
+
+              return;
           }
         }, [appState]);
 
@@ -999,7 +1008,7 @@
           return <Monitor />;
         };
 
-        const submitRoomJoin = (roomId = roomIdInput.trim()) => {
+        const submitRoomJoin = (roomId) => {
           if (!socket || !roomId) return;
           socket.emit("joinRoom", {
             roomId: roomId,
@@ -1080,7 +1089,11 @@
                   }}
                 >
                   <div>
-                    <img src="/temp-chat-logo-cropped.png" className="h-14" alt="app logo"/>
+                    <img
+                      src="/temp-chat-logo-cropped.png"
+                      className="h-14"
+                      alt="app logo"
+                    />
                     <div className="text-muted text-sm pl-5">
                       Structured socket events — no prompt parsing
                     </div>
@@ -1314,13 +1327,16 @@
                       value={roomIdInput}
                       onChange={(e) => setRoomIdInput(e.target.value)}
                       onKeyDown={(e) => {
-                        if (e.key === "Enter") submitRoomJoin();
+                        if (e.key === "Enter")
+                          submitRoomJoin(roomIdInput.trim());
                       }}
                       placeholder="Room ID"
                     />
                     <button
                       className="btn btn-primary"
-                      onClick={submitRoomJoin}
+                      onClick={() => {
+                        submitRoomJoin(roomIdInput.trim());
+                      }}
                     >
                       Join
                     </button>
