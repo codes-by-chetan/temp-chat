@@ -294,22 +294,7 @@
 
     <script type="text/babel">
       const { useState, useEffect, useRef, useCallback } = React;
-      if ("Notification" in window) {
-        Notification.requestPermission().then((permission) => {
-          if (permission !== "granted") {
-            console.log("Notification permission denied");
-          }
-        });
-      }
 
-      function sendNotification(data) {
-        if (Notification.permission === "granted") {
-          new Notification("New Message", {
-            body: `${data.from} : ` + data.text || "You have a new message!",
-            icon: "/temp-chat-logo.png", // Optional: Add an icon URL
-          });
-        }
-      }
       // Simple theme hook
       function useTheme() {
         const [theme, setTheme] = useState(() => {
@@ -768,6 +753,7 @@
         const [showEmojiPicker, setShowEmojiPicker] = useState(false);
         const { theme, setTheme } = useTheme();
         const [inputValue, setInputValue] = useState("");
+        const [swRegistration, setSwRegistration] = useState(null);
         const messagesEndRef = useRef(null);
         const chatInputRef = useRef(null);
         const usernameRef = useRef(currentUsername);
@@ -804,6 +790,29 @@
           return;
         }, [currentUsername]);
         useEffect(() => {
+          if ("serviceWorker" in navigator) {
+            navigator.serviceWorker
+              .register("/sw.js")
+              .then((registration) => {
+                console.log("Service Worker registered:", registration);
+                setSwRegistration(registration);
+              })
+              .catch((error) => {
+                console.error("Service Worker registration failed:", error);
+              });
+          }
+
+          // Request notification permission
+          if (
+            "Notification" in window &&
+            Notification.permission !== "granted"
+          ) {
+            Notification.requestPermission().then((permission) => {
+              if (permission !== "granted") {
+                console.log("Notification permission denied");
+              }
+            });
+          }
           // connect to same origin - ORIGINAL SOCKET.IO LOGIC RESTORED
           const sock = io();
           setSocket(sock);
@@ -941,7 +950,14 @@
               return;
           }
         }, [appState]);
-
+        function sendNotification(data) {
+          if (Notification.permission === "granted" && swRegistration) {
+            swRegistration.showNotification("New Message", {
+              body: `${data.from} : ` + data.text || "You have a new message!",
+              icon: "/temp-chat-logo.png", // Optional: Add an icon URL
+            });
+          }
+        }
         const addMessage = (msg) => {
           if (msg.from) {
             msg["from"] =
