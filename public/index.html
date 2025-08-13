@@ -4,8 +4,6 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>TempChat</title>
-
-    React (UMD) + Socket.IO client
     <script
       src="https://unpkg.com/react@18/umd/react.development.js"
       crossorigin="anonymous"
@@ -762,14 +760,18 @@
         const roomIdInputRef = useRef(null);
         const joinPasskeyInputRef = useRef(null);
         const usernameInputRef = useRef(null);
+        const emojiPickerButtonRef = useRef(null);
 
         useEffect(() => {
           function handleClickOutside(event) {
             if (
               emojiPickerRef.current &&
-              !emojiPickerRef.current.contains(event.target)
+              emojiPickerButtonRef.current &&
+              !emojiPickerRef.current.contains(event.target) &&
+              !emojiPickerButtonRef.current.contains(event.target)
             ) {
               setShowEmojiPicker(false);
+              chatInputRef.current?.focus();
             }
           }
 
@@ -976,7 +978,6 @@
 
         const handleEmojiSelect = (emoji) => {
           setInputValue((prev) => prev + emoji);
-          setShowEmojiPicker(false);
           chatInputRef.current?.focus();
         };
 
@@ -1093,34 +1094,20 @@
           <div style={{ minHeight: "100vh", padding: "1.5rem" }}>
             <div style={{ maxWidth: "48rem", margin: "0 auto" }}>
               {/* Header */}
-              <div
-                className="card"
-                style={{ marginBottom: "1rem", padding: "1rem" }}
-              >
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                  }}
-                >
-                  <div>
-                    <img
-                      src="/temp-chat-logo-cropped.png"
-                      className="h-14"
-                      alt="app logo"
-                    />
-                    <div className="text-muted text-sm pl-5">
-                      Structured socket events — no prompt parsing
-                    </div>
-                  </div>
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "0.5rem",
-                    }}
-                  >
+              <div className="card sm:mb-[1rem]" style={{ padding: "1rem" }}>
+                <div className="flex items-center justify-center sm:justify-between ">
+                  <img
+                    src="/temp-chat-logo-cropped.png"
+                    className="h-14 hidden dark:block"
+                    alt="app logo"
+                  />
+                  <img
+                    src="/temp-chat-logo-cropped-dark.png"
+                    className="h-14 block dark:hidden"
+                    alt="app logo"
+                  />
+
+                  <div className="hidden sm:flex items-center gap-[0.5rem]">
                     <button
                       className="btn btn-ghost btn-icon"
                       onClick={toggleTheme}
@@ -1145,8 +1132,40 @@
                     </span>
                   </div>
                 </div>
+                <div className="hidden sm:block text-slate-900 dark:text-slate-300 text-sm pl-5">
+                  Structured socket events — no prompt parsing
+                </div>
+                <div className="flex sm:hidden flex-col justify-center items-center">
+                  <span className="text-slate-900 dark:text-slate-300 text-sm">
+                    Structured socket events
+                  </span>
+                  <span className="text-slate-900 dark:text-slate-300 text-sm">
+                    no prompt parsing
+                  </span>
+                </div>
               </div>
-
+              <div className="w-full flex sm:hidden items-center justify-center gap-[0.5rem] my-[0.5rem]">
+                <button
+                  className="btn btn-ghost btn-icon"
+                  onClick={toggleTheme}
+                  title={`Switch to ${
+                    theme === "dark"
+                      ? "light"
+                      : theme === "light"
+                      ? "system"
+                      : "dark"
+                  } mode`}
+                >
+                  {getThemeIcon()}
+                </button>
+                <span
+                  className={
+                    isConnected ? "badge badge-success" : "badge badge-error"
+                  }
+                >
+                  {isConnected ? "Connected" : "Disconnected"}
+                </span>
+              </div>
               {/* Menu State */}
               {appState === "menu" && (
                 <div
@@ -1166,22 +1185,16 @@
                   >
                     Welcome
                   </h2>
-                  <div
-                    style={{
-                      display: "flex",
-                      gap: "0.75rem",
-                      justifyContent: "center",
-                    }}
-                  >
+                  <div className="flex flex-col sm:flex-row justify-center gap-[0.75rem] ">
                     <button
-                      className="btn btn-primary"
+                      className="btn btn-primary flex justify-center items-center"
                       onClick={handleHostClick}
                     >
                       <Plus />
                       Host Room
                     </button>
                     <button
-                      className="btn btn-outline"
+                      className="btn btn-outline flex justify-center items-center"
                       onClick={handleJoinClick}
                     >
                       <Users />
@@ -1204,22 +1217,16 @@
                   <h3 style={{ fontWeight: "500", marginBottom: "1rem" }}>
                     Choose Room Type
                   </h3>
-                  <div
-                    style={{
-                      display: "flex",
-                      gap: "0.75rem",
-                      justifyContent: "center",
-                    }}
-                  >
+                  <div className="flex flex-col sm:flex-row justify-center gap-[0.75rem] ">
                     <button
-                      className="btn btn-primary"
+                      className="btn btn-primary flex justify-center items-center"
                       onClick={() => chooseRoomType(false)}
                     >
                       <Globe />
                       Public Room
                     </button>
                     <button
-                      className="btn btn-outline"
+                      className="btn btn-outline flex justify-center items-center"
                       onClick={() => chooseRoomType(true)}
                     >
                       <Lock />
@@ -1244,7 +1251,7 @@
                   >
                     Set a passkey (optional)
                   </h3>
-                  <div style={{ display: "flex", gap: "0.5rem" }}>
+                  <div className="flex flex-col sm:flex-row justify-center gap-[0.5rem] ">
                     <input
                       ref={hostPasskeyRef}
                       className="input"
@@ -1257,7 +1264,7 @@
                       placeholder="passkey (optional)"
                     />
                     <button
-                      className="btn btn-primary"
+                      className="btn btn-primary flex justify-center items-center"
                       onClick={handleCreatePrivate}
                     >
                       Create
@@ -1313,7 +1320,7 @@
                   >
                     Join This Room
                   </button>
-                  <div className="text-muted text-sm">
+                  <div className="text-slate-900 dark:text-slate-400 text-sm">
                     Waiting for other users to join — set your username if
                     asked.
                   </div>
@@ -1335,7 +1342,7 @@
                   >
                     Join Room
                   </h3>
-                  <div style={{ display: "flex", gap: "0.5rem" }}>
+                  <div className="flex flex-col sm:flex-row justify-center gap-[0.5rem]">
                     <input
                       ref={roomIdInputRef}
                       className="input"
@@ -1349,7 +1356,7 @@
                       placeholder="Room ID"
                     />
                     <button
-                      className="btn btn-primary"
+                      className="btn btn-primary flex justify-center items-center"
                       onClick={() => {
                         submitRoomJoin(roomIdInput.trim());
                       }}
@@ -1375,7 +1382,7 @@
                   >
                     Enter Passkey
                   </h3>
-                  <div style={{ display: "flex", gap: "0.5rem" }}>
+                  <div className="flex flex-col sm:flex-row justify-center gap-[0.5rem]">
                     <input
                       ref={joinPasskeyInputRef}
                       className="input"
@@ -1395,7 +1402,7 @@
                       type="password"
                     />
                     <button
-                      className="btn btn-primary"
+                      className="btn btn-primary flex justify-center items-center"
                       onClick={() => {
                         socket.emit("joinRoom", {
                           roomId: currentRoomId,
@@ -1425,7 +1432,7 @@
                   >
                     Enter Username
                   </h3>
-                  <div style={{ display: "flex", gap: "0.5rem" }}>
+                  <div className="flex flex-col sm:flex-row justify-center gap-[0.5rem]">
                     <input
                       ref={usernameInputRef}
                       className="input"
@@ -1438,7 +1445,7 @@
                       placeholder="Username"
                     />
                     <button
-                      className="btn btn-primary"
+                      className="btn btn-primary flex justify-center items-center"
                       onClick={submitUsername}
                     >
                       Continue
@@ -1530,7 +1537,7 @@
                   className="card"
                   style={{ padding: "1rem", position: "relative" }}
                 >
-                  <div style={{ display: "flex", gap: "0.5rem" }}>
+                  <div className="hidden sm:flex flex-row justify-center gap-[0.5rem]">
                     <button
                       className="btn btn-ghost btn-icon"
                       onClick={() => setShowEmojiPicker(!showEmojiPicker)}
@@ -1555,6 +1562,36 @@
                     <button className="btn btn-outline" onClick={handleQuit}>
                       Leave
                     </button>
+                  </div>
+
+                  <div className="flex flex-col sm:hidden  justify-center gap-[0.5rem]">
+                    <input
+                      focus="true"
+                      ref={chatInputRef}
+                      className="input"
+                      style={{ flex: 1 }}
+                      value={inputValue}
+                      onChange={(e) => setInputValue(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") handleSend();
+                      }}
+                      placeholder="Type message (or /quit)"
+                    />
+                    <div className="flex flex-row justify-center gap-[0.5rem]">
+                      <button
+                        ref={emojiPickerButtonRef}
+                        className="btn btn-ghost btn-icon"
+                        onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                      >
+                        <Smile />
+                      </button>
+                      <button className="btn btn-primary" onClick={handleSend}>
+                        <Send />
+                      </button>
+                      <button className="btn btn-outline" onClick={handleQuit}>
+                        Leave
+                      </button>
+                    </div>
                   </div>
 
                   {/* Emoji Picker */}
