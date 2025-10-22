@@ -80,7 +80,6 @@ io.on("connection", (socket) => {
         return;
       }
       const roomId = payload.roomId;
-      console.log(rooms);
 
       const room = rooms.get(roomId);
       if (!room) {
@@ -170,7 +169,7 @@ io.on("connection", (socket) => {
     }
   });
 
-  // Send chat message: { text }
+  // Send chat message: { text, repliedTo? }
   socket.on("sendMessage", (payload) => {
     try {
       if (!payload || !payload.text) return;
@@ -187,10 +186,13 @@ io.on("connection", (socket) => {
       }
 
       const msg = {
+        messageId: uuidv4(),  // Server-generated unique ID
         from: username,
         text: String(payload.text),
         timestamp: Date.now(),
+        repliedTo: payload.repliedTo || null  // Full message object from frontend
       };
+
       io.to(roomId).emit("chatMessage", msg);
       logger.info(`Message from ${username} in ${roomId}: ${payload.text}`);
     } catch (err) {
