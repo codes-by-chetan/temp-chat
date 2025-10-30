@@ -35,6 +35,12 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
+app.get("/keep-alive", (req, res) => {
+  // No body, no auth – just a tiny HTTP response
+  res.status(200).json({ alive: true, ts: Date.now() });
+  logger.info(`Keep-alive ping received (IP: ${req.ip})`);
+});
+
 // In-memory rooms: Map<roomId, { passkey: string|null, clients: Map<socketId, username> }>
 const rooms = new Map();
 

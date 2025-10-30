@@ -1909,6 +1909,28 @@
 
         ReactDOM.render(<ChatApp />, document.getElementById("root"));
       </script>
+
+      <script>
+        // Configuration – adjust only if you change the server path
+        const KEEP_ALIVE_URL = `${window.location.origin}/keep-alive`;
+        const INTERVAL_MS = 5 * 60 * 1000; // 5 minutes
+
+        // Simple fetch that ignores the response body
+        function pingKeepAlive() {
+          fetch(KEEP_ALIVE_URL, { method: "GET", cache: "no-store" })
+            .then(() => console.log("keep-alive ping sent"))
+            .catch((err) => console.warn("keep-alive ping failed", err));
+        }
+
+        // Start immediately and then repeat
+        pingKeepAlive();
+        const keepAliveInterval = setInterval(pingKeepAlive, INTERVAL_MS);
+
+        // Optional: clean up when the page unloads (good practice)
+        window.addEventListener("beforeunload", () =>
+          clearInterval(keepAliveInterval)
+        );
+      </script>
     </body>
   </html>
 </DOCUMENT>
