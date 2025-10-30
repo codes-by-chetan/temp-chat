@@ -4,6 +4,7 @@
   <source media="(prefers-color-scheme: dark)" srcset="https://temp-chat-nqzf.onrender.com/temp-chat-logo-cropped.png">
   <img src="https://temp-chat-nqzf.onrender.com/temp-chat-logo-cropped-dark.png" alt="TempChat Logo" >
 </picture>
+
 **TempChat** is a **fully ephemeral, real-time chat application** designed for temporary conversations. Rooms and messages vanish when the last user leaves—no databases, no persistence, **zero traces**. Built with modern web technologies, it offers a **WhatsApp-like experience** in your browser: **private/public rooms**, **message replies with full context**, **emoji picker**, **dark/light themes**, and **mobile-first responsiveness**.
 
 **[Live Demo](https://temp-chat-nqzf.onrender.com/)**
