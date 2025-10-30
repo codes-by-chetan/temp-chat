@@ -67,7 +67,7 @@
 |-----------------|-----------------|-----------------------|
 | ![Home](https://cdn.jsdelivr.net/gh/codes-by-chetan/Images_Server@main/tempchat_home.png) | ![Host](https://cdn.jsdelivr.net/gh/codes-by-chetan/Images_Server@main/tempchat_room_cretated.png) | ![Chat](https://cdn.jsdelivr.net/gh/codes-by-chetan/Images_Server@main/tempchat_chat_demo.png) |
 
-*(Tip: add a short GIF of the reply-scroll feature for extra polish.)*
+
 
 ## Quick Start (Local)
 
@@ -168,19 +168,3 @@ Deployment: Render / Vercel (Serverless)
 ---
 
 **Star if you like it!**
-```
-
----
-
-### How to create the file
-
-1. Open your project folder.  
-2. Create a new file named **`README.md`**.  
-3. Paste the entire markdown content **exactly** as shown above.  
-4. Replace the placeholders:  
-   - `YOUR-USERNAME` → your GitHub username  
-   - `YOUR-REPO` → your repository name  
-   - (Optional) add real screenshot URLs.  
-5. Commit & push.
-
-Your repo will now have a **professional, fully functional README** ready for GitHub!
