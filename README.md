@@ -4,12 +4,12 @@
   <source 
     media="(prefers-color-scheme: dark)" 
     srcset="https://temp-chat-nqzf.onrender.com/temp-chat-logo-cropped.png"
-    onerror="this.onerror=null;this.srcset='https://cdn.jsdelivr.net/gh/codes-by-chetan/Images_Server@main/temp-chat-logo-cropped.png';"
+    onerror=`this.onerror=null; this.srcset='https://cdn.jsdelivr.net/gh/codes-by-chetan/Images_Server@main/temp-chat-logo-cropped.png';`
   >
   <img 
     src="https://temp-chat-nqzf.onrender.com/temp-chat-logo-cropped-dark.png" 
     alt="TempChat Logo" 
-    onerror="this.onerror=null;this.src='https://cdn.jsdelivr.net/gh/codes-by-chetan/Images_Server@main/temp-chat-logo-cropped-dark.png';"
+    onerror=`this.onerror=null; this.src='https://cdn.jsdelivr.net/gh/codes-by-chetan/Images_Server@main/temp-chat-logo-cropped-dark.png';`
   >
 </picture>
 
