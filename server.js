@@ -192,11 +192,11 @@ io.on("connection", (socket) => {
       }
 
       const msg = {
-        messageId: uuidv4(),  // Server-generated unique ID
+        messageId: uuidv4(), // Server-generated unique ID
         from: username,
         text: String(payload.text),
         timestamp: Date.now(),
-        repliedTo: payload.repliedTo || null  // Full message object from frontend
+        repliedTo: payload.repliedTo || null, // Full message object from frontend
       };
 
       io.to(roomId).emit("chatMessage", msg);
@@ -205,6 +205,16 @@ io.on("connection", (socket) => {
       logger.error(`sendMessage error: ${err.message}`);
       socket.emit("error", { message: "Unable to send message" });
     }
+  });
+
+  socket.on("ws-heartbeat", () => {
+    logger.info(
+      `WebSocket heartbeat from ${socket.id} in room ${
+        socket.data.roomId || "none"
+      }`
+    );
+    // Optional: Update lastSeen timestamp if you have reconnection logic
+    if (socket.data.lastSeen) socket.data.lastSeen = Date.now();
   });
 
   // Quit event (client leaving intentionally)

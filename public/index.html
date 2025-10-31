@@ -1,1731 +1,1756 @@
 <DOCUMENT filename="index.html">
   <!DOCTYPE html>
   <html lang="en">
-    <head>
-      <meta charset="utf-8" />
-      <meta name="viewport" content="width=device-width,initial-scale=1" />
-      <title>TempChat</title>
-      <script
-        src="https://unpkg.com/react@18/umd/react.development.js"
-        crossorigin="anonymous"
-      ></script>
-      <script
-        src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"
-        crossorigin="anonymous"
-      ></script>
-      <script
-        src="https://unpkg.com/@babel/standalone/babel.min.js"
-        crossorigin="anonymous"
-      ></script>
-      <script
-        src="https://unpkg.com/socket.io-client@4/dist/socket.io.js"
-        crossorigin="anonymous"
-      ></script>
-      <script src="https://cdn.tailwindcss.com"></script>
-      <script>
-        tailwind.config = {
-          darkMode: "class",
-          theme: {
-            extend: {
-              colors: {
-                border: "hsl(var(--border))",
-                background: "hsl(var(--background))",
-                foreground: "hsl(var(--foreground))",
-                muted: "hsl(var(--muted))",
-                "muted-foreground": "hsl(var(--muted-foreground))",
-                primary: "hsl(var(--primary))",
-                "primary-foreground": "hsl(var(--primary-foreground))",
-              },
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>TempChat</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/socket.io-client@4/dist/socket.io.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              border: "hsl(var(--border))",
+              background: "hsl(var(--background))",
+              foreground: "hsl(var(--foreground))",
+              muted: "hsl(var(--muted))",
+              "muted-foreground": "hsl(var(--muted-foreground))",
+              primary: "hsl(var(--primary))",
+              "primary-foreground": "hsl(var(--primary-foreground))",
             },
           },
-        };
-      </script>
+        },
+      };
+    </script>
 
-      <style>
-        :root {
-          --background: 0 0% 100%;
-          --foreground: 222.2 84% 4.9%;
-          --muted: 210 40% 98%;
-          --muted-foreground: 215.4 16.3% 46.9%;
-          --border: 214.3 31.8% 91.4%;
-          --primary: 221.2 83.2% 53.3%;
-          --primary-foreground: 210 40% 98%;
-        }
+    <style>
+      :root {
+        --background: 0 0% 100%;
+        --foreground: 222.2 84% 4.9%;
+        --muted: 210 40% 98%;
+        --muted-foreground: 215.4 16.3% 46.9%;
+        --border: 214.3 31.8% 91.4%;
+        --primary: 221.2 83.2% 53.3%;
+        --primary-foreground: 210 40% 98%;
+      }
 
-        .dark {
-          --background: 222.2 84% 4.9%;
-          --foreground: 210 40% 98%;
-          --muted: 217.2 32.6% 17.5%;
-          --muted-foreground: 215 20.2% 65.1%;
-          --border: 217.2 32.6% 17.5%;
-          --primary: 217.2 91.2% 59.8%;
-          --primary-foreground: 222.2 84% 4.9%;
-        }
+      .dark {
+        --background: 222.2 84% 4.9%;
+        --foreground: 210 40% 98%;
+        --muted: 217.2 32.6% 17.5%;
+        --muted-foreground: 215 20.2% 65.1%;
+        --border: 217.2 32.6% 17.5%;
+        --primary: 217.2 91.2% 59.8%;
+        --primary-foreground: 222.2 84% 4.9%;
+      }
 
-        body {
-          font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto,
-            "Helvetica Neue", Arial;
-          background-color: hsl(var(--background));
-          color: hsl(var(--foreground));
-          transition: background-color 0.3s ease, color 0.3s ease;
-        }
+      body {
+        font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial;
+        background-color: hsl(var(--background));
+        color: hsl(var(--foreground));
+        transition: background-color 0.3s ease, color 0.3s ease;
+      }
 
-        .card {
-          background-color: hsl(var(--background));
-          border: 1px solid hsl(var(--border));
-          border-radius: 0.75rem;
-          box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1),
-            0 1px 2px -1px rgb(0 0 0 / 0.1);
-        }
+      .card {
+        background-color: hsl(var(--background));
+        border: 1px solid hsl(var(--border));
+        border-radius: 0.75rem;
+        box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1),
+          0 1px 2px -1px rgb(0 0 0 / 0.1);
+      }
 
-        .dark .card {
-          box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.3),
-            0 1px 2px -1px rgb(0 0 0 / 0.3);
-        }
+      .dark .card {
+        box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.3),
+          0 1px 2px -1px rgb(0 0 0 / 0.3);
+      }
 
-        .input {
-          background-color: hsl(var(--background));
-          border: 1px solid hsl(var(--border));
-          color: hsl(var(--foreground));
-          border-radius: 0.375rem;
-          padding: 0.5rem 0.75rem;
-          transition: border-color 0.2s ease;
-        }
+      .input {
+        background-color: hsl(var(--background));
+        border: 1px solid hsl(var(--border));
+        color: hsl(var(--foreground));
+        border-radius: 0.375rem;
+        padding: 0.5rem 0.75rem;
+        transition: border-color 0.2s ease;
+      }
 
-        .input:focus {
-          outline: none;
-          border-color: hsl(var(--primary));
-          box-shadow: 0 0 0 2px hsl(var(--primary) / 0.2);
-        }
+      .input:focus {
+        outline: none;
+        border-color: hsl(var(--primary));
+        box-shadow: 0 0 0 2px hsl(var(--primary) / 0.2);
+      }
 
-        .btn {
-          border-radius: 0.375rem;
-          padding: 0.5rem 1rem;
-          font-weight: 500;
-          transition: all 0.2s ease;
-          cursor: pointer;
-          border: none;
-          display: inline-flex;
-          align-items: center;
-          gap: 0.5rem;
-        }
+      .btn {
+        border-radius: 0.375rem;
+        padding: 0.5rem 1rem;
+        font-weight: 500;
+        transition: all 0.2s ease;
+        cursor: pointer;
+        border: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
 
-        .btn-primary {
-          background-color: hsl(var(--primary));
-          color: hsl(var(--primary-foreground));
-        }
+      .btn-primary {
+        background-color: hsl(var(--primary));
+        color: hsl(var(--primary-foreground));
+      }
 
-        .btn-primary:hover {
-          background-color: hsl(var(--primary) / 0.9);
-        }
+      .btn-primary:hover {
+        background-color: hsl(var(--primary) / 0.9);
+      }
 
-        .btn-outline {
-          background-color: transparent;
-          border: 1px solid hsl(var(--border));
-          color: hsl(var(--foreground));
-        }
+      .btn-outline {
+        background-color: transparent;
+        border: 1px solid hsl(var(--border));
+        color: hsl(var(--foreground));
+      }
 
-        .btn-outline:hover {
-          background-color: hsl(var(--muted));
-        }
+      .btn-outline:hover {
+        background-color: hsl(var(--muted));
+      }
 
-        .btn-ghost {
-          background-color: transparent;
-          color: hsl(var(--foreground));
-        }
+      .btn-ghost {
+        background-color: transparent;
+        color: hsl(var(--foreground));
+      }
 
-        .btn-ghost:hover {
-          background-color: hsl(var(--muted));
-        }
+      .btn-ghost:hover {
+        background-color: hsl(var(--muted));
+      }
 
-        .btn-icon {
-          padding: 0.5rem;
-          width: 2.5rem;
-          height: 2.5rem;
-          justify-content: center;
-        }
+      .btn-icon {
+        padding: 0.5rem;
+        width: 2.5rem;
+        height: 2.5rem;
+        justify-content: center;
+      }
 
-        .badge {
-          padding: 0.25rem 0.5rem;
-          border-radius: 0.375rem;
-          font-size: 0.75rem;
-          font-weight: 500;
-        }
+      .badge {
+        padding: 0.25rem 0.5rem;
+        border-radius: 0.375rem;
+        font-size: 0.75rem;
+        font-weight: 500;
+      }
 
-        .badge-success {
-          background-color: #10b981;
-          color: white;
-        }
+      .badge-success {
+        background-color: #10b981;
+        color: white;
+      }
 
-        .badge-error {
-          background-color: #ef4444;
-          color: white;
-        }
+      .badge-error {
+        background-color: #ef4444;
+        color: white;
+      }
 
-        .message-bubble {
-          max-width: 80%;
-          padding: 0.75rem;
-          border-radius: 1rem;
-          margin-bottom: 0.5rem;
-          word-wrap: break-word; /* Wrap long words */
-        }
+      .message-bubble {
+        max-width: 80%;
+        padding: 0.75rem;
+        border-radius: 1rem;
+        margin-bottom: 0.5rem;
+        word-wrap: break-word;
+        /* Wrap long words */
+      }
 
-        .message-bubble.own {
-          background-color: hsl(var(--primary));
-          color: hsl(var(--primary-foreground));
-          margin-left: auto;
-        }
+      .message-bubble.own {
+        background-color: hsl(var(--primary));
+        color: hsl(var(--primary-foreground));
+        margin-left: auto;
+      }
 
-        .message-bubble.other {
-          background-color: hsl(var(--muted));
-          color: hsl(var(--muted-foreground));
-        }
+      .message-bubble.other {
+        background-color: hsl(var(--muted));
+        color: hsl(var(--muted-foreground));
+      }
 
-        .message-bubble.system {
-          background-color: hsl(var(--muted));
-          color: hsl(var(--muted-foreground));
-          text-align: center;
-          font-size: 0.875rem;
-          margin: 0.5rem auto;
-          max-width: fit-content;
-          padding: 0.5rem 1rem;
-        }
+      .message-bubble.system {
+        background-color: hsl(var(--muted));
+        color: hsl(var(--muted-foreground));
+        text-align: center;
+        font-size: 0.875rem;
+        margin: 0.5rem auto;
+        max-width: fit-content;
+        padding: 0.5rem 1rem;
+      }
 
-        .scroll-viewport {
-          max-height: 24rem;
-          overflow-y: auto;
-          padding: 1rem;
-        }
+      .scroll-viewport {
+        max-height: 24rem;
+        overflow-y: auto;
+        padding: 1rem;
+      }
 
-        .scroll-viewport::-webkit-scrollbar {
-          width: 6px;
-        }
+      .scroll-viewport::-webkit-scrollbar {
+        width: 6px;
+      }
 
-        .scroll-viewport::-webkit-scrollbar-track {
-          background: hsl(var(--muted));
-          border-radius: 3px;
-        }
+      .scroll-viewport::-webkit-scrollbar-track {
+        background: hsl(var(--muted));
+        border-radius: 3px;
+      }
 
-        .scroll-viewport::-webkit-scrollbar-thumb {
-          background: hsl(var(--muted-foreground) / 0.3);
-          border-radius: 3px;
-        }
+      .scroll-viewport::-webkit-scrollbar-thumb {
+        background: hsl(var(--muted-foreground) / 0.3);
+        border-radius: 3px;
+      }
 
-        .scroll-viewport::-webkit-scrollbar-thumb:hover {
-          background: hsl(var(--muted-foreground) / 0.5);
-        }
+      .scroll-viewport::-webkit-scrollbar-thumb:hover {
+        background: hsl(var(--muted-foreground) / 0.5);
+      }
 
-        .emoji-picker {
-          position: absolute;
-          bottom: 100%;
-          left: 1rem;
-          margin-bottom: 0.5rem;
-          background-color: hsl(var(--background));
-          border: 1px solid hsl(var(--border));
-          border-radius: 0.5rem;
-          padding: 0.75rem;
-          box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1),
-            0 4px 6px -4px rgb(0 0 0 / 0.1);
-          z-index: 50;
-        }
+      .emoji-picker {
+        position: absolute;
+        bottom: 100%;
+        left: 1rem;
+        margin-bottom: 0.5rem;
+        background-color: hsl(var(--background));
+        border: 1px solid hsl(var(--border));
+        border-radius: 0.5rem;
+        padding: 0.75rem;
+        box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1),
+          0 4px 6px -4px rgb(0 0 0 / 0.1);
+        z-index: 50;
+      }
 
-        /* Works in WebKit browsers (Chrome, Edge, Safari) */
-        .emoji-picker div::-webkit-scrollbar {
-          width: 6px; /* scrollbar thickness */
-        }
+      /* Works in WebKit browsers (Chrome, Edge, Safari) */
+      .emoji-picker div::-webkit-scrollbar {
+        width: 6px;
+        /* scrollbar thickness */
+      }
 
-        .emoji-picker div::-webkit-scrollbar-track {
-          background: transparent; /* scrollbar background */
-        }
+      .emoji-picker div::-webkit-scrollbar-track {
+        background: transparent;
+        /* scrollbar background */
+      }
 
-        .emoji-picker div::-webkit-scrollbar-thumb {
-          background-color: #888; /* scrollbar color */
-          border-radius: 4px;
-        }
+      .emoji-picker div::-webkit-scrollbar-thumb {
+        background-color: #888;
+        /* scrollbar color */
+        border-radius: 4px;
+      }
 
-        .emoji-picker div::-webkit-scrollbar-thumb:hover {
-          background-color: #555; /* hover effect */
-        }
+      .emoji-picker div::-webkit-scrollbar-thumb:hover {
+        background-color: #555;
+        /* hover effect */
+      }
 
-        /* For Firefox */
-        .emoji-picker div {
-          scrollbar-width: thin;
-          scrollbar-color: #888 transparent;
-        }
+      /* For Firefox */
+      .emoji-picker div {
+        scrollbar-width: thin;
+        scrollbar-color: #888 transparent;
+      }
 
-        .dark .emoji-picker {
-          box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.3),
-            0 4px 6px -4px rgb(0 0 0 / 0.3);
-        }
+      .dark .emoji-picker {
+        box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.3),
+          0 4px 6px -4px rgb(0 0 0 / 0.3);
+      }
 
-        .text-muted {
-          color: hsl(var(--muted-foreground));
-        }
+      .text-muted {
+        color: hsl(var(--muted-foreground));
+      }
 
-        .text-sm {
-          font-size: 0.875rem;
-        }
+      .text-sm {
+        font-size: 0.875rem;
+      }
 
-        .text-xs {
-          font-size: 0.75rem;
-        }
+      .text-xs {
+        font-size: 0.75rem;
+      }
 
-        .opacity-70 {
-          opacity: 0.7;
-        }
+      .opacity-70 {
+        opacity: 0.7;
+      }
 
-        /* Legacy classes for compatibility */
-        .bg-blue-600 {
-          background-color: hsl(var(--primary)) !important;
-        }
-        .text-white {
-          color: hsl(var(--primary-foreground)) !important;
-        }
-        .border {
-          border: 1px solid hsl(var(--border)) !important;
-        }
-        .text-gray-500 {
-          color: hsl(var(--muted-foreground)) !important;
-        }
+      /* Legacy classes for compatibility */
+      .bg-blue-600 {
+        background-color: hsl(var(--primary)) !important;
+      }
 
-        .reply-preview {
-          background-color: hsl(var(--primary));
-          padding: 0.5rem;
-          border-radius: 0.5rem;
-          margin-bottom: 0.5rem;
-          font-size: 0.875rem;
-          color: hsl(var(--primary-foreground));
-          cursor: pointer;
-        }
+      .text-white {
+        color: hsl(var(--primary-foreground)) !important;
+      }
 
-        .reply-preview.own {
-          background-color: hsl(var(--muted));
-          color: hsl(var(--muted-foreground));
-        }
-      </style>
-    </head>
-    <body>
-      <div id="root"></div>
+      .border {
+        border: 1px solid hsl(var(--border)) !important;
+      }
 
-      <script type="text/babel">
-        const { useState, useEffect, useRef, useCallback } = React;
+      .text-gray-500 {
+        color: hsl(var(--muted-foreground)) !important;
+      }
 
-        // Simple theme hook
-        function useTheme() {
-          const [theme, setTheme] = useState(() => {
-            const saved = localStorage.getItem("theme");
-            return saved || "system";
-          });
-          useEffect(() => {
+      .reply-preview {
+        background-color: hsl(var(--primary));
+        padding: 0.5rem;
+        border-radius: 0.5rem;
+        margin-bottom: 0.5rem;
+        font-size: 0.875rem;
+        color: hsl(var(--primary-foreground));
+        cursor: pointer;
+      }
+
+      .reply-preview.own {
+        background-color: hsl(var(--muted));
+        color: hsl(var(--muted-foreground));
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+      const { useState, useEffect, useRef, useCallback } = React;
+
+      // Simple theme hook
+      function useTheme() {
+        const [theme, setTheme] = useState(() => {
+          const saved = localStorage.getItem("theme");
+          return saved || "system";
+        });
+        useEffect(() => {
+          const root = document.documentElement;
+          const systemTheme = window.matchMedia(
+            "(prefers-color-scheme: dark)"
+          ).matches
+            ? "dark"
+            : "light";
+          const effectiveTheme = theme === "system" ? systemTheme : theme;
+
+          if (effectiveTheme === "dark") {
+            root.classList.add("dark");
+          } else {
+            root.classList.remove("dark");
+          }
+
+          localStorage.setItem("theme", theme);
+        }, [theme]);
+
+        useEffect(() => {
+          const mediaQuery = window.matchMedia(
+            "(prefers-color-scheme: dark)"
+          );
+          mediaQuery.addEventListener("change", (event) => {
             const root = document.documentElement;
-            const systemTheme = window.matchMedia(
-              "(prefers-color-scheme: dark)"
-            ).matches
-              ? "dark"
-              : "light";
-            const effectiveTheme = theme === "system" ? systemTheme : theme;
+            const systemTheme = event.matches ? "dark" : "light";
 
-            if (effectiveTheme === "dark") {
+            if (systemTheme === "dark") {
               root.classList.add("dark");
             } else {
               root.classList.remove("dark");
             }
+          });
+        }, []);
 
-            localStorage.setItem("theme", theme);
-          }, [theme]);
+        return { theme, setTheme };
+      }
 
-          useEffect(() => {
-            const mediaQuery = window.matchMedia(
-              "(prefers-color-scheme: dark)"
-            );
-            mediaQuery.addEventListener("change", (event) => {
-              const root = document.documentElement;
-              const systemTheme = event.matches ? "dark" : "light";
-
-              if (systemTheme === "dark") {
-                root.classList.add("dark");
-              } else {
-                root.classList.remove("dark");
-              }
-            });
-          }, []);
-
-          return { theme, setTheme };
-        }
-
-        // Icon components
-        const Moon = ({ className = "h-4 w-4" }) => (
-          <svg
-            className={className}
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
-            />
-          </svg>
-        );
-
-        const Sun = ({ className = "h-4 w-4" }) => (
-          <svg
-            className={className}
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
-            />
-          </svg>
-        );
-
-        const Monitor = ({ className = "h-4 w-4" }) => (
-          <svg
-            className={className}
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-            />
-          </svg>
-        );
-
-        const Send = ({ className = "h-4 w-4" }) => (
-          <svg
-            className={className}
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
-            />
-          </svg>
-        );
-
-        const Smile = ({ className = "h-4 w-4" }) => (
-          <svg
-            className={className}
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-            />
-          </svg>
-        );
-
-        const Users = ({ className = "h-4 w-4" }) => (
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
+      // Icon components
+      const Moon = ({ className = "h-4 w-4" }) => (
+        <svg
+          className={className}
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
             strokeLinecap="round"
             strokeLinejoin="round"
-            className={className}
-          >
-            <path d="M2 21a8 8 0 0 1 13.292-6" />
-            <circle cx="10" cy="8" r="5" />
-            <path d="M19 16v6" />
-            <path d="M22 19h-6" />
-          </svg>
-        );
+            strokeWidth={2}
+            d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
+          />
+        </svg>
+      );
 
-        const Plus = ({ className = "h-4 w-4" }) => (
-          <svg
-            className={className}
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-            />
-          </svg>
-        );
-
-        const Host = ({ className = "h-4 w-4" }) => (
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
+      const Sun = ({ className = "h-4 w-4" }) => (
+        <svg
+          className={className}
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
             strokeLinecap="round"
             strokeLinejoin="round"
-            className={className}
-          >
-            <path d="M13 3H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-3" />
-            <path d="M8 21h8" />
-            <path d="M12 17v4" />
-            <path d="m17 8 5-5" />
-            <path d="M17 3h5v5" />
-          </svg>
-        );
+            strokeWidth={2}
+            d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
+          />
+        </svg>
+      );
 
-        const Copy = ({ className = "h-4 w-4" }) => (
-          <svg
-            className={className}
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
-            />
-          </svg>
-        );
-
-        const ArrowLeft = ({ className = "h-4 w-4" }) => (
-          <svg
-            className={className}
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M10 19l-7-7m0 0l7-7m-7 7h18"
-            />
-          </svg>
-        );
-
-        const Lock = ({ className = "h-4 w-4" }) => (
-          <svg
-            className={className}
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-            />
-          </svg>
-        );
-
-        const Globe = ({ className = "h-4 w-4" }) => (
-          <svg
-            className={className}
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"
-            />
-          </svg>
-        );
-
-        const Exit = ({ className = "h-4 w-4" }) => (
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
+      const Monitor = ({ className = "h-4 w-4" }) => (
+        <svg
+          className={className}
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
             strokeLinecap="round"
             strokeLinejoin="round"
-            className={className}
-          >
-            <path d="m16 17 5-5-5-5" />
-            <path d="M21 12H9" />
-            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-          </svg>
-        );
+            strokeWidth={2}
+            d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+          />
+        </svg>
+      );
 
-        const ReplyIcon = ({ className = "h-4 w-4" }) => (
-          <svg
-            className={className}
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"
-            />
-          </svg>
-        );
+      const Send = ({ className = "h-4 w-4" }) => (
+        <svg
+          className={className}
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
+          />
+        </svg>
+      );
 
-        function ChatApp() {
-          const [socket, setSocket] = useState(null);
-          const [isConnected, setIsConnected] = useState(false);
-          const commonEmojis = [
-            // 😀 Smileys & Emotion
-            "😀",
-            "😁",
-            "😂",
-            "🤣",
-            "😃",
-            "😄",
-            "😅",
-            "😆",
-            "😉",
-            "😊",
-            "😋",
-            "😎",
-            "😍",
-            "😘",
-            "🥰",
-            "😗",
-            "😙",
-            "😚",
-            "🙂",
-            "🤗",
-            "🤩",
-            "🤔",
-            "🤨",
-            "😐",
-            "😑",
-            "🙄",
-            "😏",
-            "😣",
-            "😥",
-            "😮",
-            "🤐",
-            "😯",
-            "😪",
-            "😫",
-            "🥱",
-            "😴",
-            "😌",
-            "😛",
-            "😜",
-            "🤪",
-            "😝",
-            "🤑",
-            "🤠",
-            "😈",
-            "👿",
-            "💀",
-            "☠️",
-            "🤡",
-            "💩",
-            "😺",
-            "😸",
-            "😹",
-            "😻",
-            "😼",
-            "😽",
-            "🙀",
-            "😿",
-            "😾",
+      const Smile = ({ className = "h-4 w-4" }) => (
+        <svg
+          className={className}
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+          />
+        </svg>
+      );
 
-            // ❤️ Hearts & Love
-            "❤️",
-            "🧡",
-            "💛",
-            "💚",
-            "💙",
-            "💜",
-            "🖤",
-            "🤍",
-            "🤎",
-            "💔",
-            "❣️",
-            "💕",
-            "💞",
-            "💓",
-            "💗",
-            "💖",
-            "💘",
-            "💝",
-            "💟",
+      const Users = ({ className = "h-4 w-4" }) => (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className={className}
+        >
+          <path d="M2 21a8 8 0 0 1 13.292-6" />
+          <circle cx="10" cy="8" r="5" />
+          <path d="M19 16v6" />
+          <path d="M22 19h-6" />
+        </svg>
+      );
 
-            // 👍 Gestures
-            "👍",
-            "👎",
-            "👌",
-            "✌️",
-            "🤞",
-            "🤟",
-            "🤘",
-            "🤙",
-            "👊",
-            "✊",
-            "👏",
-            "🙌",
-            "👐",
-            "🤲",
-            "🤝",
+      const Plus = ({ className = "h-4 w-4" }) => (
+        <svg
+          className={className}
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+          />
+        </svg>
+      );
 
-            // 🙋 People & Activities
-            "🙋",
-            "🙆",
-            "🙅",
-            "💁",
-            "🙇",
-            "🤷",
-            "🤦",
-            "👋",
-            "🤚",
-            "🖐️",
-            "✋",
-            "🖖",
-            "🙏",
-            "🚶",
-            "🏃",
-            "💃",
-            "🕺",
-            "🛌",
-            "🧘",
-            "🏋️",
-            "🤸",
-            "🏄",
-            "🏊",
-            "🚴",
-            "🚵",
+      const Host = ({ className = "h-4 w-4" }) => (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className={className}
+        >
+          <path d="M13 3H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-3" />
+          <path d="M8 21h8" />
+          <path d="M12 17v4" />
+          <path d="m17 8 5-5" />
+          <path d="M17 3h5v5" />
+        </svg>
+      );
 
-            // 🌍 Nature & Animals
-            "🐶",
-            "🐱",
-            "🐭",
-            "🐹",
-            "🐰",
-            "🦊",
-            "🐻",
-            "🐼",
-            "🐨",
-            "🐯",
-            "🦁",
-            "🐮",
-            "🐷",
-            "🐸",
-            "🐵",
-            "🙈",
-            "🙉",
-            "🙊",
-            "🐒",
-            "🐔",
-            "🐧",
-            "🐦",
-            "🐤",
-            "🐣",
-            "🦆",
-            "🦅",
-            "🦉",
-            "🦇",
-            "🐺",
-            "🐗",
-            "🐴",
-            "🦄",
-            "🐝",
-            "🐛",
-            "🦋",
-            "🐌",
-            "🐞",
-            "🐜",
-            "🪲",
-            "🐢",
-            "🐍",
-            "🦎",
-            "🦖",
-            "🦕",
-            "🐙",
-            "🦑",
-            "🦐",
-            "🦞",
-            "🦀",
-            "🐡",
-            "🐠",
-            "🐟",
-            "🐬",
-            "🐳",
-            "🐋",
-            "🦈",
-            "🐊",
-            "🐅",
-            "🐆",
-            "🦓",
-            "🦍",
-            "🦧",
-            "🦣",
-            "🐘",
-            "🦛",
-            "🦏",
-            "🐪",
-            "🐫",
-            "🦒",
-            "🦘",
-            "🐃",
-            "🐂",
-            "🐄",
-            "🐎",
-            "🐖",
-            "🐏",
-            "🐑",
-            "🦙",
-            "🐐",
-            "🦌",
-            "🐕",
-            "🐩",
-            "🐈",
-            "🐓",
-            "🦃",
-            "🦤",
-            "🦚",
-            "🦜",
-            "🦢",
-            "🕊️",
-            "🦩",
-            "🦦",
-            "🦥",
-            "🐁",
-            "🐀",
-            "🐿️",
-            "🦔",
-          ];
-          const params = new URLSearchParams(window.location.search);
-          const room = params.get("room");
-          // UI state
-          const [appState, setAppState] = useState(
-            room ? "join-input" : "menu"
-          ); // menu, host-passkey, host-room, join-input, username, chat
-          const [isPrivateRoom, setIsPrivateRoom] = useState(false);
-          const [passkey, setPasskey] = useState("");
-          const [roomIdInput, setRoomIdInput] = useState(room || "");
-          const [usernameInput, setUsernameInput] = useState("");
-          const [currentUsername, setCurrentUsername] = useState("");
-          const [currentRoomId, setCurrentRoomId] = useState("");
-          const [messages, setMessages] = useState([]);
-          const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-          const { theme, setTheme } = useTheme();
-          const [inputValue, setInputValue] = useState("");
-          const [swRegistration, setSwRegistration] = useState(null);
-          const [replyTarget, setReplyTarget] = useState(null); // { messageId, from (original), text, timestamp }
-          const [expandedMessages, setExpandedMessages] = useState(new Set()); // Set of messageIds that are expanded
-          const messagesEndRef = useRef(null);
-          const chatInputRef = useRef(null);
-          const usernameRef = useRef(currentUsername);
-          const emojiPickerRef = useRef(null);
-          const hostPasskeyRef = useRef(null);
-          const roomIdInputRef = useRef(null);
-          const joinPasskeyInputRef = useRef(null);
-          const usernameInputRef = useRef(null);
-          const emojiPickerButtonRef = useRef(null);
+      const Copy = ({ className = "h-4 w-4" }) => (
+        <svg
+          className={className}
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+          />
+        </svg>
+      );
 
-          useEffect(() => {
-            function handleClickOutside(event) {
-              if (
-                emojiPickerRef.current &&
-                emojiPickerButtonRef.current &&
-                !emojiPickerRef.current.contains(event.target) &&
-                !emojiPickerButtonRef.current.contains(event.target)
-              ) {
-                setShowEmojiPicker(false);
-                chatInputRef.current?.focus();
-              }
-            }
+      const ArrowLeft = ({ className = "h-4 w-4" }) => (
+        <svg
+          className={className}
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M10 19l-7-7m0 0l7-7m-7 7h18"
+          />
+        </svg>
+      );
 
-            if (showEmojiPicker) {
-              document.addEventListener("mousedown", handleClickOutside);
-            } else {
-              document.removeEventListener("mousedown", handleClickOutside);
-            }
+      const Lock = ({ className = "h-4 w-4" }) => (
+        <svg
+          className={className}
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+          />
+        </svg>
+      );
 
-            return () => {
-              document.removeEventListener("mousedown", handleClickOutside);
-            };
-          }, [showEmojiPicker]);
+      const Globe = ({ className = "h-4 w-4" }) => (
+        <svg
+          className={className}
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"
+          />
+        </svg>
+      );
 
-          useEffect(() => {
-            usernameRef.current = currentUsername;
-            console.log("username changed : ", currentUsername);
-            return;
-          }, [currentUsername]);
+      const Exit = ({ className = "h-4 w-4" }) => (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className={className}
+        >
+          <path d="m16 17 5-5-5-5" />
+          <path d="M21 12H9" />
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+        </svg>
+      );
 
-          useEffect(() => {
-            if ("serviceWorker" in navigator) {
-              navigator.serviceWorker
-                .register("/sw.js")
-                .then((registration) => {
-                  console.log("Service Worker registered:", registration);
-                  setSwRegistration(registration);
-                })
-                .catch((error) => {
-                  console.error("Service Worker registration failed:", error);
-                });
-            }
+      const ReplyIcon = ({ className = "h-4 w-4" }) => (
+        <svg
+          className={className}
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"
+          />
+        </svg>
+      );
 
-            // Request notification permission
+      function ChatApp() {
+        const [socket, setSocket] = useState(null);
+        const [isConnected, setIsConnected] = useState(false);
+        const commonEmojis = [
+          // 😀 Smileys & Emotion
+          "😀",
+          "😁",
+          "😂",
+          "🤣",
+          "😃",
+          "😄",
+          "😅",
+          "😆",
+          "😉",
+          "😊",
+          "😋",
+          "😎",
+          "😍",
+          "😘",
+          "🥰",
+          "😗",
+          "😙",
+          "😚",
+          "🙂",
+          "🤗",
+          "🤩",
+          "🤔",
+          "🤨",
+          "😐",
+          "😑",
+          "🙄",
+          "😏",
+          "😣",
+          "😥",
+          "😮",
+          "🤐",
+          "😯",
+          "😪",
+          "😫",
+          "🥱",
+          "😴",
+          "😌",
+          "😛",
+          "😜",
+          "🤪",
+          "😝",
+          "🤑",
+          "🤠",
+          "😈",
+          "👿",
+          "💀",
+          "☠️",
+          "🤡",
+          "💩",
+          "😺",
+          "😸",
+          "😹",
+          "😻",
+          "😼",
+          "😽",
+          "🙀",
+          "😿",
+          "😾",
+
+          // ❤️ Hearts & Love
+          "❤️",
+          "🧡",
+          "💛",
+          "💚",
+          "💙",
+          "💜",
+          "🖤",
+          "🤍",
+          "🤎",
+          "💔",
+          "❣️",
+          "💕",
+          "💞",
+          "💓",
+          "💗",
+          "💖",
+          "💘",
+          "💝",
+          "💟",
+
+          // 👍 Gestures
+          "👍",
+          "👎",
+          "👌",
+          "✌️",
+          "🤞",
+          "🤟",
+          "🤘",
+          "🤙",
+          "👊",
+          "✊",
+          "👏",
+          "🙌",
+          "👐",
+          "🤲",
+          "🤝",
+
+          // 🙋 People & Activities
+          "🙋",
+          "🙆",
+          "🙅",
+          "💁",
+          "🙇",
+          "🤷",
+          "🤦",
+          "👋",
+          "🤚",
+          "🖐️",
+          "✋",
+          "🖖",
+          "🙏",
+          "🚶",
+          "🏃",
+          "💃",
+          "🕺",
+          "🛌",
+          "🧘",
+          "🏋️",
+          "🤸",
+          "🏄",
+          "🏊",
+          "🚴",
+          "🚵",
+
+          // 🌍 Nature & Animals
+          "🐶",
+          "🐱",
+          "🐭",
+          "🐹",
+          "🐰",
+          "🦊",
+          "🐻",
+          "🐼",
+          "🐨",
+          "🐯",
+          "🦁",
+          "🐮",
+          "🐷",
+          "🐸",
+          "🐵",
+          "🙈",
+          "🙉",
+          "🙊",
+          "🐒",
+          "🐔",
+          "🐧",
+          "🐦",
+          "🐤",
+          "🐣",
+          "🦆",
+          "🦅",
+          "🦉",
+          "🦇",
+          "🐺",
+          "🐗",
+          "🐴",
+          "🦄",
+          "🐝",
+          "🐛",
+          "🦋",
+          "🐌",
+          "🐞",
+          "🐜",
+          "🪲",
+          "🐢",
+          "🐍",
+          "🦎",
+          "🦖",
+          "🦕",
+          "🐙",
+          "🦑",
+          "🦐",
+          "🦞",
+          "🦀",
+          "🐡",
+          "🐠",
+          "🐟",
+          "🐬",
+          "🐳",
+          "🐋",
+          "🦈",
+          "🐊",
+          "🐅",
+          "🐆",
+          "🦓",
+          "🦍",
+          "🦧",
+          "🦣",
+          "🐘",
+          "🦛",
+          "🦏",
+          "🐪",
+          "🐫",
+          "🦒",
+          "🦘",
+          "🐃",
+          "🐂",
+          "🐄",
+          "🐎",
+          "🐖",
+          "🐏",
+          "🐑",
+          "🦙",
+          "🐐",
+          "🦌",
+          "🐕",
+          "🐩",
+          "🐈",
+          "🐓",
+          "🦃",
+          "🦤",
+          "🦚",
+          "🦜",
+          "🦢",
+          "🕊️",
+          "🦩",
+          "🦦",
+          "🦥",
+          "🐁",
+          "🐀",
+          "🐿️",
+          "🦔",
+        ];
+        const params = new URLSearchParams(window.location.search);
+        const room = params.get("room");
+        // UI state
+        const [appState, setAppState] = useState(
+          room ? "join-input" : "menu"
+        ); // menu, host-passkey, host-room, join-input, username, chat
+        const [isPrivateRoom, setIsPrivateRoom] = useState(false);
+        const [passkey, setPasskey] = useState("");
+        const [roomIdInput, setRoomIdInput] = useState(room || "");
+        const [usernameInput, setUsernameInput] = useState("");
+        const [currentUsername, setCurrentUsername] = useState("");
+        const [currentRoomId, setCurrentRoomId] = useState("");
+        const [messages, setMessages] = useState([]);
+        const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+        const { theme, setTheme } = useTheme();
+        const [inputValue, setInputValue] = useState("");
+        const [swRegistration, setSwRegistration] = useState(null);
+        const [replyTarget, setReplyTarget] = useState(null); // { messageId, from (original), text, timestamp }
+        const [expandedMessages, setExpandedMessages] = useState(new Set()); // Set of messageIds that are expanded
+        const messagesEndRef = useRef(null);
+        const chatInputRef = useRef(null);
+        const usernameRef = useRef(currentUsername);
+        const emojiPickerRef = useRef(null);
+        const hostPasskeyRef = useRef(null);
+        const roomIdInputRef = useRef(null);
+        const joinPasskeyInputRef = useRef(null);
+        const usernameInputRef = useRef(null);
+        const emojiPickerButtonRef = useRef(null);
+
+        const HEARTBEAT_EVENT = "ws-heartbeat";
+        const HEARTBEAT_INTERVAL_MS = 4 * 60 * 1000;
+
+        useEffect(() => {
+          function handleClickOutside(event) {
             if (
-              "Notification" in window &&
-              Notification.permission !== "granted"
+              emojiPickerRef.current &&
+              emojiPickerButtonRef.current &&
+              !emojiPickerRef.current.contains(event.target) &&
+              !emojiPickerButtonRef.current.contains(event.target)
             ) {
-              Notification.requestPermission().then((permission) => {
-                if (permission !== "granted") {
-                  console.log("Notification permission denied");
-                }
-              });
-            }
-            // connect to same origin - ORIGINAL SOCKET.IO LOGIC RESTORED
-            const sock = io();
-            setSocket(sock);
-
-            sock.on("connect", () => {
-              setIsConnected(true);
-              addSystemMessage("Connected to server");
-            });
-
-            sock.on("disconnect", () => {
-              setIsConnected(false);
-              addSystemMessage("Disconnected from server");
-              setAppState("menu");
-            });
-
-            // Structured events - ORIGINAL LOGIC RESTORED
-            sock.on("roomCreated", (data) => {
-              // data: { roomId, passkeyRequired, message }
-              setCurrentRoomId(data.roomId);
-              setAppState("host-room");
-              addSystemMessage(data.message || `Room created: ${data.roomId}`);
-            });
-
-            sock.on("needUsername", (data) => {
-              // after join attempt
-              setCurrentRoomId(data.roomId || "");
-              setAppState("username");
-              addSystemMessage(data.message || "Enter username to continue");
-            });
-
-            sock.on("joinedRoom", (data) => {
-              // data: { roomId, username, message }
-              setCurrentRoomId(data.roomId);
-              setCurrentUsername(data.username);
-              setAppState("chat");
-              console.log("joined user : ", data.username);
-              addSystemMessage(data.message || "You joined the room");
-            });
-
-            sock.on("chatMessage", (msg) => {
-              // msg: { from, text, timestamp, messageId, repliedTo? }
-              if (msg.from) {
-                msg.displayFrom =
-                  msg.from === usernameRef.current ? "You" : msg.from;
-              }
-              setMessages((prev) => [...prev, msg]);
-            });
-
-            sock.on("needPasskey", (data) => {
-              setCurrentRoomId(data.roomId);
-              setAppState("join-passkey");
-              addSystemMessage(data.message || "Enter passkey to join");
-            });
-
-            sock.on("error", (err) => {
-              // err: { message }
-              const msg =
-                (err && err.message) ||
-                (typeof err === "string" ? err : "Unknown error");
-              addSystemMessage(`Error: ${msg}`);
-            });
-
-            sock.on("state", (data) => {
-              // optional server state events
-              if (data && data.step === "connected") {
-                // nothing
-              }
-            });
-
-            return () => {
-              sock.disconnect();
-            };
-          }, []);
-
-          useEffect(() => {
-            messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-            console.log("current user in messages", currentUsername);
-            if (messages.length > 0) {
-              const lastMessage = messages[messages.length - 1];
-              let sanitizedMessage;
-              try {
-                sanitizedMessage = JSON.parse(JSON.stringify(lastMessage)); // Throws on circular
-              } catch (e) {
-                console.error("Cannot send due to data structure issues:", e);
-                return;
-              }
-              if (
-                sanitizedMessage.displayFrom != "You" &&
-                sanitizedMessage.from != "system"
-              ) {
-                sendNotification(sanitizedMessage);
-              }
-            }
-            return;
-          }, [messages]);
-
-          useEffect(() => {
-            // This runs every time appState changes
-            console.log("App state changed to:", appState);
-
-            // You can perform your operation here based on the current appState
-            switch (appState) {
-              case "chat":
-                chatInputRef.current?.focus();
-                break;
-              case "menu":
-                // do something when appState is "menu"
-                break;
-              case "host-type":
-                // do something when appState is "host-type"
-                break;
-              case "host-passkey":
-                hostPasskeyRef.current?.focus();
-                break;
-              case "host-room":
-                // do something when appState is "host-type"
-                break;
-              case "join-input":
-                roomIdInputRef.current?.focus();
-                break;
-              case "join-passkey":
-                joinPasskeyInputRef.current?.focus();
-                break;
-              case "username":
-                usernameInputRef.current?.focus();
-                break;
-              // handle other cases similarly...
-              default:
-                // default case if needed
-                break;
-
-                return;
-            }
-          }, [appState]);
-
-          function sendNotification(data) {
-            if (Notification.permission === "granted" && swRegistration) {
-              swRegistration.showNotification("New Message", {
-                body: `${data.displayFrom} : ` + data.text || "...(truncated)",
-              });
+              setShowEmojiPicker(false);
+              chatInputRef.current?.focus();
             }
           }
 
-          const addSystemMessage = (text) => {
-            setMessages((prev) => [
-              ...prev,
-              { from: "system", text, timestamp: Date.now() },
-            ]);
-          };
+          if (showEmojiPicker) {
+            document.addEventListener("mousedown", handleClickOutside);
+          } else {
+            document.removeEventListener("mousedown", handleClickOutside);
+          }
 
-          const handleHostClick = () => {
-            setAppState("host-type");
+          return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
           };
+        }, [showEmojiPicker]);
 
-          const chooseRoomType = (isPrivate) => {
-            setIsPrivateRoom(isPrivate);
-            if (isPrivate) setAppState("host-passkey");
-            else {
-              // emit hostRoom open - ORIGINAL LOGIC RESTORED
-              if (!socket) return;
-              socket.emit("hostRoom", { private: false });
+        useEffect(() => {
+          if (!socket || appState !== "chat" || !socket.connected) return;
+
+          const interval = setInterval(() => {
+            if (socket.connected) {
+              socket.emit(HEARTBEAT_EVENT, { roomId: currentRoomId });
+              console.log("WebSocket heartbeat sent");
             }
-          };
+          }, HEARTBEAT_INTERVAL_MS);
 
-          const handleCreatePrivate = () => {
-            if (!socket) return;
-            socket.emit("hostRoom", {
-              private: true,
-              passkey: passkey || null,
+          return () => clearInterval(interval);
+        }, [socket, appState, currentRoomId]);
+
+        useEffect(() => {
+          usernameRef.current = currentUsername;
+          console.log("username changed : ", currentUsername);
+          return;
+        }, [currentUsername]);
+
+        useEffect(() => {
+          if ("serviceWorker" in navigator) {
+            navigator.serviceWorker
+              .register("/sw.js")
+              .then((registration) => {
+                console.log("Service Worker registered:", registration);
+                setSwRegistration(registration);
+              })
+              .catch((error) => {
+                console.error("Service Worker registration failed:", error);
+              });
+          }
+
+          // Request notification permission
+          if (
+            "Notification" in window &&
+            Notification.permission !== "granted"
+          ) {
+            Notification.requestPermission().then((permission) => {
+              if (permission !== "granted") {
+                console.log("Notification permission denied");
+              }
             });
-            setPasskey("");
-          };
+          }
+          // connect to same origin - ORIGINAL SOCKET.IO LOGIC RESTORED
+          const sock = io();
+          setSocket(sock);
 
-          const handleJoinClick = () => {
-            setAppState("join-input");
-          };
+          sock.on("connect", () => {
+            setIsConnected(true);
+            addSystemMessage("Connected to server");
+          });
 
-          const toggleTheme = () => {
-            if (theme === "dark") {
-              setTheme("light");
-            } else if (theme === "light") {
-              setTheme("system");
-            } else {
-              setTheme("dark");
-            }
-          };
-
-          const getThemeIcon = () => {
-            if (theme === "dark") return <Moon />;
-            if (theme === "light") return <Sun />;
-            return <Monitor />;
-          };
-
-          const submitRoomJoin = (roomId) => {
-            if (!socket || !roomId) return;
-            socket.emit("joinRoom", {
-              roomId: roomId,
-              passkey: passkey || null,
-            });
-            // keep passkey value only if used; the server will ask for username next
-            setRoomIdInput("");
-          };
-
-          const submitUsername = () => {
-            if (!socket || !usernameInput.trim()) return;
-            socket.emit("setUsername", { username: usernameInput.trim() });
-            setUsernameInput("");
-          };
-
-          const handleEmojiSelect = (emoji) => {
-            setInputValue((prev) => prev + emoji);
-            setShowEmojiPicker(false);
-            chatInputRef.current?.focus();
-          };
-
-          const handleSend = () => {
-            if (!inputValue.trim() || !socket) return;
-            const payload = { text: inputValue };
-            if (replyTarget) {
-              payload.repliedTo = {
-                messageId: replyTarget.messageId,
-                from: replyTarget.from, // Original from
-                text: replyTarget.text,
-                timestamp: replyTarget.timestamp,
-              };
-            }
-            socket.emit("sendMessage", payload);
-            setInputValue("");
-            setReplyTarget(null);
-            chatInputRef.current?.focus();
-            setShowEmojiPicker(false);
-          };
-
-          const handleQuit = () => {
-            if (!socket) return;
-            socket.emit("quit");
+          sock.on("disconnect", () => {
+            setIsConnected(false);
+            addSystemMessage("Disconnected from server");
             setAppState("menu");
-            setMessages([]);
-            setCurrentRoomId("");
+          });
+
+          // Structured events - ORIGINAL LOGIC RESTORED
+          sock.on("roomCreated", (data) => {
+            // data: { roomId, passkeyRequired, message }
+            setCurrentRoomId(data.roomId);
+            setAppState("host-room");
+            addSystemMessage(data.message || `Room created: ${data.roomId}`);
+          });
+
+          sock.on("needUsername", (data) => {
+            // after join attempt
+            setCurrentRoomId(data.roomId || "");
+            setAppState("username");
+            addSystemMessage(data.message || "Enter username to continue");
+          });
+
+          sock.on("joinedRoom", (data) => {
+            // data: { roomId, username, message }
+            setCurrentRoomId(data.roomId);
+            setCurrentUsername(data.username);
+            setAppState("chat");
+            console.log("joined user : ", data.username);
+            addSystemMessage(data.message || "You joined the room");
+          });
+
+          sock.on("chatMessage", (msg) => {
+            // msg: { from, text, timestamp, messageId, repliedTo? }
+            if (msg.from) {
+              msg.displayFrom =
+                msg.from === usernameRef.current ? "You" : msg.from;
+            }
+            setMessages((prev) => [...prev, msg]);
+          });
+
+          sock.on("needPasskey", (data) => {
+            setCurrentRoomId(data.roomId);
+            setAppState("join-passkey");
+            addSystemMessage(data.message || "Enter passkey to join");
+          });
+
+          sock.on("error", (err) => {
+            // err: { message }
+            const msg =
+              (err && err.message) ||
+              (typeof err === "string" ? err : "Unknown error");
+            addSystemMessage(`Error: ${msg}`);
+          });
+
+          sock.on("state", (data) => {
+            // optional server state events
+            if (data && data.step === "connected") {
+              // nothing
+            }
+          });
+
+          return () => {
+            sock.disconnect();
           };
+        }, []);
 
-          const copyRoomId = async () => {
-            if (!currentRoomId) return;
+        useEffect(() => {
+          messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+          console.log("current user in messages", currentUsername);
+          if (messages.length > 0) {
+            const lastMessage = messages[messages.length - 1];
+            let sanitizedMessage;
+            try {
+              sanitizedMessage = JSON.parse(JSON.stringify(lastMessage)); // Throws on circular
+            } catch (e) {
+              console.error("Cannot send due to data structure issues:", e);
+              return;
+            }
+            if (
+              sanitizedMessage.displayFrom != "You" &&
+              sanitizedMessage.from != "system"
+            ) {
+              sendNotification(sanitizedMessage);
+            }
+          }
+          return;
+        }, [messages]);
 
-            if (navigator?.clipboard?.writeText) {
-              try {
-                await navigator.clipboard.writeText(currentRoomId);
+        useEffect(() => {
+          // This runs every time appState changes
+          console.log("App state changed to:", appState);
+
+          // You can perform your operation here based on the current appState
+          switch (appState) {
+            case "chat":
+              chatInputRef.current?.focus();
+              break;
+            case "menu":
+              // do something when appState is "menu"
+              break;
+            case "host-type":
+              // do something when appState is "host-type"
+              break;
+            case "host-passkey":
+              hostPasskeyRef.current?.focus();
+              break;
+            case "host-room":
+              // do something when appState is "host-type"
+              break;
+            case "join-input":
+              roomIdInputRef.current?.focus();
+              break;
+            case "join-passkey":
+              joinPasskeyInputRef.current?.focus();
+              break;
+            case "username":
+              usernameInputRef.current?.focus();
+              break;
+            // handle other cases similarly...
+            default:
+              // default case if needed
+              break;
+
+              return;
+          }
+        }, [appState]);
+
+        function sendNotification(data) {
+          if (Notification.permission === "granted" && swRegistration) {
+            swRegistration.showNotification("New Message", {
+              body: `${data.displayFrom} : ` + data.text || "...(truncated)",
+            });
+          }
+        }
+
+        const addSystemMessage = (text) => {
+          setMessages((prev) => [
+            ...prev,
+            { from: "system", text, timestamp: Date.now() },
+          ]);
+        };
+
+        const handleHostClick = () => {
+          setAppState("host-type");
+        };
+
+        const chooseRoomType = (isPrivate) => {
+          setIsPrivateRoom(isPrivate);
+          if (isPrivate) setAppState("host-passkey");
+          else {
+            // emit hostRoom open - ORIGINAL LOGIC RESTORED
+            if (!socket) return;
+            socket.emit("hostRoom", { private: false });
+          }
+        };
+
+        const handleCreatePrivate = () => {
+          if (!socket) return;
+          socket.emit("hostRoom", {
+            private: true,
+            passkey: passkey || null,
+          });
+          setPasskey("");
+        };
+
+        const handleJoinClick = () => {
+          setAppState("join-input");
+        };
+
+        const toggleTheme = () => {
+          if (theme === "dark") {
+            setTheme("light");
+          } else if (theme === "light") {
+            setTheme("system");
+          } else {
+            setTheme("dark");
+          }
+        };
+
+        const getThemeIcon = () => {
+          if (theme === "dark") return <Moon />;
+          if (theme === "light") return <Sun />;
+          return <Monitor />;
+        };
+
+        const submitRoomJoin = (roomId) => {
+          if (!socket || !roomId) return;
+          socket.emit("joinRoom", {
+            roomId: roomId,
+            passkey: passkey || null,
+          });
+          // keep passkey value only if used; the server will ask for username next
+          setRoomIdInput("");
+        };
+
+        const submitUsername = () => {
+          if (!socket || !usernameInput.trim()) return;
+          socket.emit("setUsername", { username: usernameInput.trim() });
+          setUsernameInput("");
+        };
+
+        const handleEmojiSelect = (emoji) => {
+          setInputValue((prev) => prev + emoji);
+          setShowEmojiPicker(false);
+          chatInputRef.current?.focus();
+        };
+
+        const handleSend = () => {
+          if (!inputValue.trim() || !socket) return;
+          const payload = { text: inputValue };
+          if (replyTarget) {
+            payload.repliedTo = {
+              messageId: replyTarget.messageId,
+              from: replyTarget.from, // Original from
+              text: replyTarget.text,
+              timestamp: replyTarget.timestamp,
+            };
+          }
+          socket.emit("sendMessage", payload);
+          setInputValue("");
+          setReplyTarget(null);
+          chatInputRef.current?.focus();
+          setShowEmojiPicker(false);
+        };
+
+        const handleQuit = () => {
+          if (!socket) return;
+          socket.emit("quit");
+          setAppState("menu");
+          setMessages([]);
+          setCurrentRoomId("");
+        };
+
+        const copyRoomId = async () => {
+          if (!currentRoomId) return;
+
+          if (navigator?.clipboard?.writeText) {
+            try {
+              await navigator.clipboard.writeText(currentRoomId);
+              addSystemMessage("Room ID copied to clipboard!");
+            } catch (e) {
+              console.error(e);
+              addSystemMessage("Unable to copy to clipboard");
+            }
+          } else {
+            // Fallback method using execCommand
+            try {
+              const tempInput = document.createElement("input");
+              tempInput.value = currentRoomId;
+              document.body.appendChild(tempInput);
+              tempInput.select();
+              const successful = document.execCommand("copy");
+              document.body.removeChild(tempInput);
+
+              if (successful) {
                 addSystemMessage("Room ID copied to clipboard!");
-              } catch (e) {
-                console.error(e);
-                addSystemMessage("Unable to copy to clipboard");
-              }
-            } else {
-              // Fallback method using execCommand
-              try {
-                const tempInput = document.createElement("input");
-                tempInput.value = currentRoomId;
-                document.body.appendChild(tempInput);
-                tempInput.select();
-                const successful = document.execCommand("copy");
-                document.body.removeChild(tempInput);
-
-                if (successful) {
-                  addSystemMessage("Room ID copied to clipboard!");
-                } else {
-                  addSystemMessage("Unable to copy to clipboard");
-                }
-              } catch (e) {
-                console.error(e);
-                addSystemMessage("Unable to copy to clipboard");
-              }
-            }
-          };
-
-          const copyJoinUrl = async () => {
-            if (!currentRoomId) return;
-            const url = `${window.location.origin}/?room=${currentRoomId}`;
-            if (navigator?.clipboard?.writeText) {
-              try {
-                await navigator.clipboard.writeText(url);
-                addSystemMessage("Join URL copied to clipboard!");
-              } catch (e) {
-                console.error(e);
-                addSystemMessage("Unable to copy to clipboard");
-              }
-            } else {
-              // Fallback method using execCommand
-              try {
-                const tempInput = document.createElement("input");
-                tempInput.value = url;
-                document.body.appendChild(tempInput);
-                tempInput.select();
-                const successful = document.execCommand("copy");
-                document.body.removeChild(tempInput);
-
-                if (successful) {
-                  addSystemMessage("Join URL copied to clipboard!");
-                } else {
-                  addSystemMessage("Unable to copy to clipboard");
-                }
-              } catch (e) {
-                console.error(e);
-                addSystemMessage("Unable to copy to clipboard");
-              }
-            }
-          };
-
-          const handleReplyTo = (message) => {
-            if (message.from === "system" || !message.messageId) return;
-            setReplyTarget({
-              messageId: message.messageId,
-              from: message.from, // Original from
-              text: message.text,
-              timestamp: message.timestamp,
-            });
-            chatInputRef.current?.focus();
-          };
-
-          const scrollToMessage = (messageId) => {
-            const element = document.getElementById(`msg-${messageId}`);
-            if (element) {
-              element.scrollIntoView({ behavior: "smooth" });
-            }
-          };
-
-          const toggleExpandMessage = (messageId) => {
-            setExpandedMessages((prev) => {
-              const newSet = new Set(prev);
-              if (newSet.has(messageId)) {
-                newSet.delete(messageId);
               } else {
-                newSet.add(messageId);
+                addSystemMessage("Unable to copy to clipboard");
               }
-              return newSet;
-            });
-          };
+            } catch (e) {
+              console.error(e);
+              addSystemMessage("Unable to copy to clipboard");
+            }
+          }
+        };
 
-          // UI rendering with improved styling
-          return (
-            <div style={{ minHeight: "100vh", padding: "1.5rem" }}>
-              <div style={{ maxWidth: "48rem", margin: "0 auto" }}>
-                {appState === "chat" && (
-                  <div className="w-full mb-4 flex justify-end">
+        const copyJoinUrl = async () => {
+          if (!currentRoomId) return;
+          const url = `${window.location.origin}/?room=${currentRoomId}`;
+          if (navigator?.clipboard?.writeText) {
+            try {
+              await navigator.clipboard.writeText(url);
+              addSystemMessage("Join URL copied to clipboard!");
+            } catch (e) {
+              console.error(e);
+              addSystemMessage("Unable to copy to clipboard");
+            }
+          } else {
+            // Fallback method using execCommand
+            try {
+              const tempInput = document.createElement("input");
+              tempInput.value = url;
+              document.body.appendChild(tempInput);
+              tempInput.select();
+              const successful = document.execCommand("copy");
+              document.body.removeChild(tempInput);
+
+              if (successful) {
+                addSystemMessage("Join URL copied to clipboard!");
+              } else {
+                addSystemMessage("Unable to copy to clipboard");
+              }
+            } catch (e) {
+              console.error(e);
+              addSystemMessage("Unable to copy to clipboard");
+            }
+          }
+        };
+
+        const handleReplyTo = (message) => {
+          if (message.from === "system" || !message.messageId) return;
+          setReplyTarget({
+            messageId: message.messageId,
+            from: message.from, // Original from
+            text: message.text,
+            timestamp: message.timestamp,
+          });
+          chatInputRef.current?.focus();
+        };
+
+        const scrollToMessage = (messageId) => {
+          const element = document.getElementById(`msg-${messageId}`);
+          if (element) {
+            element.scrollIntoView({ behavior: "smooth" });
+          }
+        };
+
+        const toggleExpandMessage = (messageId) => {
+          setExpandedMessages((prev) => {
+            const newSet = new Set(prev);
+            if (newSet.has(messageId)) {
+              newSet.delete(messageId);
+            } else {
+              newSet.add(messageId);
+            }
+            return newSet;
+          });
+        };
+
+        // UI rendering with improved styling
+        return (
+          <div style={{ minHeight: "100vh", padding: "1.5rem" }}>
+            <div style={{ maxWidth: "48rem", margin: "0 auto" }}>
+              {appState === "chat" && (
+                <div className="w-full mb-4 flex justify-end">
+                  <button
+                    className="btn btn-outline bg-red-700 hover:bg-red-800"
+                    onClick={handleQuit}
+                  >
+                    <Exit />
+                  </button>
+                </div>
+              )}
+              {/* Header */}
+              <div className="card sm:mb-[1rem]" style={{ padding: "1rem" }}>
+                <div className="flex items-center justify-center sm:justify-between ">
+                  <a href="/">
+                    <img
+                      src="/temp-chat-logo-cropped.png"
+                      className="h-14 hidden dark:block"
+                      alt="app logo"
+                    />
+                    <img
+                      src="/temp-chat-logo-cropped-dark.png"
+                      className="h-14 block dark:hidden"
+                      alt="app logo"
+                    />
+                  </a>
+
+                  <div className="hidden sm:flex items-center gap-[0.5rem]">
                     <button
-                      className="btn btn-outline bg-red-700 hover:bg-red-800"
-                      onClick={handleQuit}
-                    >
-                      <Exit />
-                    </button>
-                  </div>
-                )}
-                {/* Header */}
-                <div className="card sm:mb-[1rem]" style={{ padding: "1rem" }}>
-                  <div className="flex items-center justify-center sm:justify-between ">
-                    <a href="/">
-                      <img
-                        src="/temp-chat-logo-cropped.png"
-                        className="h-14 hidden dark:block"
-                        alt="app logo"
-                      />
-                      <img
-                        src="/temp-chat-logo-cropped-dark.png"
-                        className="h-14 block dark:hidden"
-                        alt="app logo"
-                      />
-                    </a>
-
-                    <div className="hidden sm:flex items-center gap-[0.5rem]">
-                      <button
-                        className="btn btn-ghost btn-icon"
-                        onClick={toggleTheme}
-                        title={`Switch to ${
-                          theme === "dark"
-                            ? "light"
-                            : theme === "light"
+                      className="btn btn-ghost btn-icon"
+                      onClick={toggleTheme}
+                      title={`Switch to ${theme === "dark"
+                          ? "light"
+                          : theme === "light"
                             ? "system"
                             : "dark"
                         } mode`}
-                      >
-                        {getThemeIcon()}
-                      </button>
-                      <span
-                        className={
-                          isConnected
-                            ? "badge badge-success"
-                            : "badge badge-error"
-                        }
-                      >
-                        {isConnected ? "Connected" : "Disconnected"}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="hidden sm:block text-slate-900 dark:text-slate-300 text-sm pl-5">
-                    Structured socket events — no prompt parsing
-                  </div>
-                  <div className="flex sm:hidden flex-col justify-center items-center">
-                    <span className="text-slate-900 dark:text-slate-300 text-sm">
-                      Structured socket events
-                    </span>
-                    <span className="text-slate-900 dark:text-slate-300 text-sm">
-                      no prompt parsing
+                    >
+                      {getThemeIcon()}
+                    </button>
+                    <span
+                      className={
+                        isConnected
+                          ? "badge badge-success"
+                          : "badge badge-error"
+                      }
+                    >
+                      {isConnected ? "Connected" : "Disconnected"}
                     </span>
                   </div>
                 </div>
-                <div className="w-full flex sm:hidden items-center justify-center gap-[0.5rem] my-[0.5rem]">
-                  <button
-                    className="btn btn-ghost btn-icon"
-                    onClick={toggleTheme}
-                    title={`Switch to ${
-                      theme === "dark"
-                        ? "light"
-                        : theme === "light"
+                <div className="hidden sm:block text-slate-900 dark:text-slate-300 text-sm pl-5">
+                  Structured socket events — no prompt parsing
+                </div>
+                <div className="flex sm:hidden flex-col justify-center items-center">
+                  <span className="text-slate-900 dark:text-slate-300 text-sm">
+                    Structured socket events
+                  </span>
+                  <span className="text-slate-900 dark:text-slate-300 text-sm">
+                    no prompt parsing
+                  </span>
+                </div>
+              </div>
+              <div className="w-full flex sm:hidden items-center justify-center gap-[0.5rem] my-[0.5rem]">
+                <button
+                  className="btn btn-ghost btn-icon"
+                  onClick={toggleTheme}
+                  title={`Switch to ${theme === "dark"
+                      ? "light"
+                      : theme === "light"
                         ? "system"
                         : "dark"
                     } mode`}
-                  >
-                    {getThemeIcon()}
-                  </button>
-                  <span
-                    className={
-                      isConnected ? "badge badge-success" : "badge badge-error"
-                    }
-                  >
-                    {isConnected ? "Connected" : "Disconnected"}
-                  </span>
-                </div>
-                {/* Menu State */}
-                {appState === "menu" && (
-                  <div
-                    className="card"
+                >
+                  {getThemeIcon()}
+                </button>
+                <span
+                  className={
+                    isConnected ? "badge badge-success" : "badge badge-error"
+                  }
+                >
+                  {isConnected ? "Connected" : "Disconnected"}
+                </span>
+              </div>
+              {/* Menu State */}
+              {appState === "menu" && (
+                <div
+                  className="card"
+                  style={{
+                    marginBottom: "1rem",
+                    padding: "2rem",
+                    textAlign: "center",
+                  }}
+                >
+                  <h3
                     style={{
+                      fontWeight: "500",
                       marginBottom: "1rem",
-                      padding: "2rem",
-                      textAlign: "center",
                     }}
                   >
-                    <h3
-                      style={{
-                        fontWeight: "500",
-                        marginBottom: "1rem",
-                      }}
-                    >
-                      Welcome
-                    </h3>
-                    <div className="flex flex-col sm:flex-row justify-center gap-[0.75rem] ">
-                      <button
-                        className="btn btn-primary flex justify-center items-center text-sm  py-1.5 px-2.5"
-                        onClick={handleHostClick}
-                      >
-                        <Host />
-                        Host Room
-                      </button>
-                      <button
-                        className="btn btn-outline flex justify-center items-center text-sm  py-1.5 px-2.5"
-                        onClick={handleJoinClick}
-                      >
-                        <Users className="h-4 w-4 text-black dark:text-white" />
-                        Join Room
-                      </button>
-                    </div>
-                  </div>
-                )}
-
-                {/* Host Type Selection */}
-                {appState === "host-type" && (
-                  <div
-                    className="card"
-                    style={{
-                      marginBottom: "1rem",
-                      padding: "2rem",
-                      textAlign: "center",
-                    }}
-                  >
-                    <h3 style={{ fontWeight: "500", marginBottom: "1rem" }}>
-                      Choose Room Type
-                    </h3>
-                    <div className="flex flex-col sm:flex-row justify-center gap-[0.75rem] ">
-                      <button
-                        className="btn btn-primary flex justify-center items-center text-sm  py-1.5 px-2.5"
-                        onClick={() => chooseRoomType(false)}
-                      >
-                        <Globe />
-                        Public Room
-                      </button>
-                      <button
-                        className="btn btn-outline flex justify-center items-center text-sm  py-1.5 px-2.5"
-                        onClick={() => chooseRoomType(true)}
-                      >
-                        <Lock />
-                        Private Room
-                      </button>
-                    </div>
-                  </div>
-                )}
-
-                {/* Host Passkey */}
-                {appState === "host-passkey" && (
-                  <div
-                    className="card"
-                    style={{ marginBottom: "1rem", padding: "1.5rem" }}
-                  >
-                    <h3
-                      style={{
-                        fontWeight: "500",
-                        marginBottom: "1rem",
-                        textAlign: "center",
-                      }}
-                    >
-                      Set a passkey (optional)
-                    </h3>
-                    <div className="flex flex-col sm:flex-row justify-center gap-[0.5rem] ">
-                      <input
-                        ref={hostPasskeyRef}
-                        className="input"
-                        style={{ flex: 1 }}
-                        value={passkey}
-                        onChange={(e) => setPasskey(e.target.value)}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter") handleCreatePrivate();
-                        }}
-                        placeholder="passkey (optional)"
-                      />
-                      <button
-                        className="btn btn-primary flex justify-center items-center"
-                        onClick={handleCreatePrivate}
-                      >
-                        Create
-                      </button>
-                    </div>
-                  </div>
-                )}
-
-                {/* Host Room */}
-                {appState === "host-room" && (
-                  <div
-                    className="card"
-                    style={{
-                      marginBottom: "1rem",
-                      padding: "2rem",
-                      textAlign: "center",
-                    }}
-                  >
-                    <h3 style={{ fontWeight: "500", marginBottom: "1rem" }}>
-                      Room Created
-                    </h3>
-                    <div
-                      style={{
-                        display: "flex",
-                        gap: "0.5rem",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        marginBottom: "1rem",
-                      }}
-                    >
-                      <input
-                        className="input"
-                        readOnly
-                        value={currentRoomId}
-                        style={{
-                          fontFamily: "monospace",
-                          textAlign: "center",
-                          width: "18rem",
-                        }}
-                      />
-                      <button
-                        className="btn btn-outline btn-icon"
-                        onClick={copyRoomId}
-                      >
-                        <Copy />
-                      </button>
-                    </div>
-                    <div
-                      style={{
-                        display: "flex",
-                        gap: "0.5rem",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        marginBottom: "1rem",
-                      }}
-                    >
-                      <input
-                        className="input"
-                        readOnly
-                        value={`${window.location.origin}/?room=${currentRoomId}`}
-                        style={{
-                          fontFamily: "monospace",
-                          textAlign: "center",
-                          width: "18rem",
-                        }}
-                      />
-                      <button
-                        className="btn btn-outline btn-icon"
-                        onClick={copyJoinUrl}
-                      >
-                        <Copy />
-                      </button>
-                    </div>
+                    Welcome
+                  </h3>
+                  <div className="flex flex-col sm:flex-row justify-center gap-[0.75rem] ">
                     <button
-                      className="btn btn-primary text-sm py-1.5 px-2.5"
-                      onClick={() => {
-                        submitRoomJoin(currentRoomId);
-                      }}
+                      className="btn btn-primary flex justify-center items-center text-sm  py-1.5 px-2.5"
+                      onClick={handleHostClick}
                     >
-                      Join This Room
+                      <Host />
+                      Host Room
                     </button>
-                    <div className="text-slate-900 dark:text-slate-400 text-xs mt-3">
-                      Waiting for other users to join — set your username if
-                      asked.
-                    </div>
-                  </div>
-                )}
-
-                {/* Join Input */}
-                {appState === "join-input" && (
-                  <div
-                    className="card"
-                    style={{ marginBottom: "1rem", padding: "1.5rem" }}
-                  >
-                    <h3
-                      style={{
-                        fontWeight: "500",
-                        marginBottom: "1rem",
-                        textAlign: "center",
-                      }}
+                    <button
+                      className="btn btn-outline flex justify-center items-center text-sm  py-1.5 px-2.5"
+                      onClick={handleJoinClick}
                     >
+                      <Users className="h-4 w-4 text-black dark:text-white" />
                       Join Room
-                    </h3>
-                    <div className="flex flex-col sm:flex-row justify-center gap-[0.5rem]">
-                      <input
-                        ref={roomIdInputRef}
-                        className="input"
-                        style={{ flex: 1 }}
-                        value={roomIdInput}
-                        onChange={(e) => setRoomIdInput(e.target.value)}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter")
-                            submitRoomJoin(roomIdInput.trim());
-                        }}
-                        placeholder="Room ID"
-                      />
-                      <button
-                        className="btn btn-primary flex justify-center items-center"
-                        onClick={() => {
-                          submitRoomJoin(roomIdInput.trim());
-                        }}
-                      >
-                        Join
-                      </button>
-                    </div>
+                    </button>
                   </div>
-                )}
+                </div>
+              )}
 
-                {/* Join Passkey */}
-                {appState === "join-passkey" && (
-                  <div
-                    className="card"
-                    style={{ marginBottom: "1rem", padding: "1.5rem" }}
+              {/* Host Type Selection */}
+              {appState === "host-type" && (
+                <div
+                  className="card"
+                  style={{
+                    marginBottom: "1rem",
+                    padding: "2rem",
+                    textAlign: "center",
+                  }}
+                >
+                  <h3 style={{ fontWeight: "500", marginBottom: "1rem" }}>
+                    Choose Room Type
+                  </h3>
+                  <div className="flex flex-col sm:flex-row justify-center gap-[0.75rem] ">
+                    <button
+                      className="btn btn-primary flex justify-center items-center text-sm  py-1.5 px-2.5"
+                      onClick={() => chooseRoomType(false)}
+                    >
+                      <Globe />
+                      Public Room
+                    </button>
+                    <button
+                      className="btn btn-outline flex justify-center items-center text-sm  py-1.5 px-2.5"
+                      onClick={() => chooseRoomType(true)}
+                    >
+                      <Lock />
+                      Private Room
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Host Passkey */}
+              {appState === "host-passkey" && (
+                <div
+                  className="card"
+                  style={{ marginBottom: "1rem", padding: "1.5rem" }}
+                >
+                  <h3
+                    style={{
+                      fontWeight: "500",
+                      marginBottom: "1rem",
+                      textAlign: "center",
+                    }}
                   >
-                    <h3
+                    Set a passkey (optional)
+                  </h3>
+                  <div className="flex flex-col sm:flex-row justify-center gap-[0.5rem] ">
+                    <input
+                      ref={hostPasskeyRef}
+                      className="input"
+                      style={{ flex: 1 }}
+                      value={passkey}
+                      onChange={(e) => setPasskey(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") handleCreatePrivate();
+                      }}
+                      placeholder="passkey (optional)"
+                    />
+                    <button
+                      className="btn btn-primary flex justify-center items-center"
+                      onClick={handleCreatePrivate}
+                    >
+                      Create
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Host Room */}
+              {appState === "host-room" && (
+                <div
+                  className="card"
+                  style={{
+                    marginBottom: "1rem",
+                    padding: "2rem",
+                    textAlign: "center",
+                  }}
+                >
+                  <h3 style={{ fontWeight: "500", marginBottom: "1rem" }}>
+                    Room Created
+                  </h3>
+                  <div
+                    style={{
+                      display: "flex",
+                      gap: "0.5rem",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      marginBottom: "1rem",
+                    }}
+                  >
+                    <input
+                      className="input"
+                      readOnly
+                      value={currentRoomId}
                       style={{
-                        fontWeight: "500",
-                        marginBottom: "1rem",
+                        fontFamily: "monospace",
                         textAlign: "center",
+                        width: "18rem",
+                      }}
+                    />
+                    <button
+                      className="btn btn-outline btn-icon"
+                      onClick={copyRoomId}
+                    >
+                      <Copy />
+                    </button>
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      gap: "0.5rem",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      marginBottom: "1rem",
+                    }}
+                  >
+                    <input
+                      className="input"
+                      readOnly
+                      value={`${window.location.origin}/?room=${currentRoomId}`}
+                      style={{
+                        fontFamily: "monospace",
+                        textAlign: "center",
+                        width: "18rem",
+                      }}
+                    />
+                    <button
+                      className="btn btn-outline btn-icon"
+                      onClick={copyJoinUrl}
+                    >
+                      <Copy />
+                    </button>
+                  </div>
+                  <button
+                    className="btn btn-primary text-sm py-1.5 px-2.5"
+                    onClick={() => {
+                      submitRoomJoin(currentRoomId);
+                    }}
+                  >
+                    Join This Room
+                  </button>
+                  <div className="text-slate-900 dark:text-slate-400 text-xs mt-3">
+                    Waiting for other users to join — set your username if
+                    asked.
+                  </div>
+                </div>
+              )}
+
+              {/* Join Input */}
+              {appState === "join-input" && (
+                <div
+                  className="card"
+                  style={{ marginBottom: "1rem", padding: "1.5rem" }}
+                >
+                  <h3
+                    style={{
+                      fontWeight: "500",
+                      marginBottom: "1rem",
+                      textAlign: "center",
+                    }}
+                  >
+                    Join Room
+                  </h3>
+                  <div className="flex flex-col sm:flex-row justify-center gap-[0.5rem]">
+                    <input
+                      ref={roomIdInputRef}
+                      className="input"
+                      style={{ flex: 1 }}
+                      value={roomIdInput}
+                      onChange={(e) => setRoomIdInput(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter")
+                          submitRoomJoin(roomIdInput.trim());
+                      }}
+                      placeholder="Room ID"
+                    />
+                    <button
+                      className="btn btn-primary flex justify-center items-center"
+                      onClick={() => {
+                        submitRoomJoin(roomIdInput.trim());
                       }}
                     >
-                      Enter Passkey
-                    </h3>
-                    <div className="flex flex-col sm:flex-row justify-center gap-[0.5rem]">
-                      <input
-                        ref={joinPasskeyInputRef}
-                        className="input"
-                        style={{ flex: 1 }}
-                        value={passkey}
-                        onChange={(e) => setPasskey(e.target.value)}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter") {
-                            socket.emit("joinRoom", {
-                              roomId: currentRoomId,
-                              passkey,
-                            });
-                            setPasskey("");
-                          }
-                        }}
-                        placeholder="Passkey"
-                        type="password"
-                      />
-                      <button
-                        className="btn btn-primary flex justify-center items-center"
-                        onClick={() => {
+                      Join
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Join Passkey */}
+              {appState === "join-passkey" && (
+                <div
+                  className="card"
+                  style={{ marginBottom: "1rem", padding: "1.5rem" }}
+                >
+                  <h3
+                    style={{
+                      fontWeight: "500",
+                      marginBottom: "1rem",
+                      textAlign: "center",
+                    }}
+                  >
+                    Enter Passkey
+                  </h3>
+                  <div className="flex flex-col sm:flex-row justify-center gap-[0.5rem]">
+                    <input
+                      ref={joinPasskeyInputRef}
+                      className="input"
+                      style={{ flex: 1 }}
+                      value={passkey}
+                      onChange={(e) => setPasskey(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
                           socket.emit("joinRoom", {
                             roomId: currentRoomId,
                             passkey,
                           });
                           setPasskey("");
-                        }}
-                      >
-                        Submit
-                      </button>
-                    </div>
-                  </div>
-                )}
-
-                {/* Username Input */}
-                {appState === "username" && (
-                  <div
-                    className="card"
-                    style={{ marginBottom: "1rem", padding: "1.5rem" }}
-                  >
-                    <h3
-                      style={{
-                        fontWeight: "500",
-                        marginBottom: "1rem",
-                        textAlign: "center",
+                        }
+                      }}
+                      placeholder="Passkey"
+                      type="password"
+                    />
+                    <button
+                      className="btn btn-primary flex justify-center items-center"
+                      onClick={() => {
+                        socket.emit("joinRoom", {
+                          roomId: currentRoomId,
+                          passkey,
+                        });
+                        setPasskey("");
                       }}
                     >
-                      Enter Username
-                    </h3>
-                    <div className="flex flex-col sm:flex-row justify-center gap-[0.5rem]">
-                      <input
-                        ref={usernameInputRef}
-                        className="input"
-                        style={{ flex: 1 }}
-                        value={usernameInput}
-                        onChange={(e) => setUsernameInput(e.target.value)}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter") submitUsername();
-                        }}
-                        placeholder="Username"
-                      />
-                      <button
-                        className="btn btn-primary flex justify-center items-center"
-                        onClick={submitUsername}
-                      >
-                        Continue
-                      </button>
-                    </div>
+                      Submit
+                    </button>
                   </div>
-                )}
+                </div>
+              )}
 
-                {/* Chat Messages */}
-                {(appState === "chat" || messages.length > 0) && (
-                  <div
-                    className="card bg-slate-400 dark:bg-slate-600"
-                    style={{ marginBottom: "1rem" }}
+              {/* Username Input */}
+              {appState === "username" && (
+                <div
+                  className="card"
+                  style={{ marginBottom: "1rem", padding: "1.5rem" }}
+                >
+                  <h3
+                    style={{
+                      fontWeight: "500",
+                      marginBottom: "1rem",
+                      textAlign: "center",
+                    }}
                   >
-                    <div className="scroll-viewport">
-                      <div>
-                        {messages.map((message) => (
-                          <div
-                            id={`msg-${message.messageId}`}
-                            key={
-                              message.messageId || Date.now() + Math.random()
-                            }
-                          >
-                            {message.from === "system" ? (
-                              <div className="message-bubble system">
-                                {message.text}
-                              </div>
-                            ) : (
+                    Enter Username
+                  </h3>
+                  <div className="flex flex-col sm:flex-row justify-center gap-[0.5rem]">
+                    <input
+                      ref={usernameInputRef}
+                      className="input"
+                      style={{ flex: 1 }}
+                      value={usernameInput}
+                      onChange={(e) => setUsernameInput(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") submitUsername();
+                      }}
+                      placeholder="Username"
+                    />
+                    <button
+                      className="btn btn-primary flex justify-center items-center"
+                      onClick={submitUsername}
+                    >
+                      Continue
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Chat Messages */}
+              {(appState === "chat" || messages.length > 0) && (
+                <div
+                  className="card bg-slate-400 dark:bg-slate-600"
+                  style={{ marginBottom: "1rem" }}
+                >
+                  <div className="scroll-viewport">
+                    <div>
+                      {messages.map((message) => (
+                        <div
+                          id={`msg-${message.messageId}`}
+                          key={
+                            message.messageId || Date.now() + Math.random()
+                          }
+                        >
+                          {message.from === "system" ? (
+                            <div className="message-bubble system">
+                              {message.text}
+                            </div>
+                          ) : (
+                            <div
+                              style={{
+                                display: "flex",
+                                justifyContent:
+                                  message.displayFrom === "You"
+                                    ? "flex-end"
+                                    : "flex-start",
+                                marginBottom: "0.75rem",
+                              }}
+                            >
                               <div
-                                style={{
-                                  display: "flex",
-                                  justifyContent:
-                                    message.displayFrom === "You"
-                                      ? "flex-end"
-                                      : "flex-start",
-                                  marginBottom: "0.75rem",
-                                }}
-                              >
-                                <div
-                                  className={`message-bubble ${
-                                    message.displayFrom === "You"
-                                      ? "own"
-                                      : "other"
+                                className={`message-bubble ${message.displayFrom === "You"
+                                    ? "own"
+                                    : "other"
                                   }`}
-                                  style={{ position: "relative" }}
-                                >
-                                  {message.repliedTo && (
-                                    <div
-                                      className={`reply-preview ${
-                                        message.displayFrom === "You"
-                                          ? "own"
-                                          : "other"
-                                      }`}
-                                      onClick={() =>
-                                        scrollToMessage(
-                                          message.repliedTo.messageId
-                                        )
-                                      }
-                                    >
-                                      Replied to{" "}
-                                      {message.repliedTo.from ===
-                                      currentUsername
-                                        ? "your message"
-                                        : message.repliedTo.from}
-                                      :{" "}
-                                      {message.repliedTo.text.length > 50
-                                        ? message.repliedTo.text.slice(0, 50) +
-                                          "..."
-                                        : message.repliedTo.text}
-                                    </div>
-                                  )}
-                                  {message.displayFrom !== "You" && (
-                                    <div
-                                      className="text-xs opacity-70"
-                                      style={{
-                                        marginBottom: "0.25rem",
-                                        fontWeight: "500",
-                                      }}
-                                    >
-                                      {message.displayFrom}
-                                    </div>
-                                  )}
+                                style={{ position: "relative" }}
+                              >
+                                {message.repliedTo && (
                                   <div
+                                    className={`reply-preview ${message.displayFrom === "You"
+                                        ? "own"
+                                        : "other"
+                                      }`}
+                                    onClick={() =>
+                                      scrollToMessage(
+                                        message.repliedTo.messageId
+                                      )
+                                    }
+                                  >
+                                    Replied to{" "}
+                                    {message.repliedTo.from ===
+                                      currentUsername
+                                      ? "your message"
+                                      : message.repliedTo.from}
+                                    :{" "}
+                                    {message.repliedTo.text.length > 50
+                                      ? message.repliedTo.text.slice(0, 50) +
+                                      "..."
+                                      : message.repliedTo.text}
+                                  </div>
+                                )}
+                                {message.displayFrom !== "You" && (
+                                  <div
+                                    className="text-xs opacity-70"
                                     style={{
-                                      fontSize: "0.875rem",
-                                      whiteSpace: "pre-wrap",
-                                      wordBreak: "break-word",
-                                      maxWidth: "100%",
+                                      marginBottom: "0.25rem",
+                                      fontWeight: "500",
                                     }}
                                   >
-                                    {message.text.length > 500 &&
+                                    {message.displayFrom}
+                                  </div>
+                                )}
+                                <div
+                                  style={{
+                                    fontSize: "0.875rem",
+                                    whiteSpace: "pre-wrap",
+                                    wordBreak: "break-word",
+                                    maxWidth: "100%",
+                                  }}
+                                >
+                                  {message.text.length > 500 &&
                                     !expandedMessages.has(message.messageId) ? (
-                                      <>
-                                        {message.text.slice(0, 500)}...
+                                    <>
+                                      {message.text.slice(0, 500)}...
+                                      <button
+                                        className="btn btn-ghost text-xs"
+                                        onClick={() =>
+                                          toggleExpandMessage(
+                                            message.messageId
+                                          )
+                                        }
+                                      >
+                                        Show more
+                                      </button>
+                                    </>
+                                  ) : (
+                                    <>
+                                      {message.text}
+                                      {message.text.length > 500 && (
                                         <button
                                           className="btn btn-ghost text-xs"
                                           onClick={() =>
@@ -1734,203 +1759,189 @@
                                             )
                                           }
                                         >
-                                          Show more
+                                          Show less
                                         </button>
-                                      </>
-                                    ) : (
-                                      <>
-                                        {message.text}
-                                        {message.text.length > 500 && (
-                                          <button
-                                            className="btn btn-ghost text-xs"
-                                            onClick={() =>
-                                              toggleExpandMessage(
-                                                message.messageId
-                                              )
-                                            }
-                                          >
-                                            Show less
-                                          </button>
-                                        )}
-                                      </>
-                                    )}
-                                  </div>
-                                  <div
-                                    className="text-xs opacity-70"
-                                    style={{ marginTop: "0.25rem" }}
-                                  >
-                                    {new Date(
-                                      message.timestamp
-                                    ).toLocaleTimeString([], {
-                                      hour: "2-digit",
-                                      minute: "2-digit",
-                                    })}
-                                  </div>
-                                  <button
-                                    className="btn btn-ghost btn-icon text-xs"
-                                    style={
-                                      message.displayFrom !== "You"
-                                        ? {
-                                            position: "absolute",
-                                            bottom: "1rem",
-                                            right: "-4rem",
-                                          }
-                                        : {
-                                            position: "absolute",
-                                            bottom: "1rem",
-                                            left: "-4rem",
-                                          }
-                                    }
-                                    onClick={() => handleReplyTo(message)}
-                                  >
-                                    <ReplyIcon />
-                                  </button>
+                                      )}
+                                    </>
+                                  )}
                                 </div>
+                                <div
+                                  className="text-xs opacity-70"
+                                  style={{ marginTop: "0.25rem" }}
+                                >
+                                  {new Date(
+                                    message.timestamp
+                                  ).toLocaleTimeString([], {
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                  })}
+                                </div>
+                                <button
+                                  className="btn btn-ghost btn-icon text-xs"
+                                  style={
+                                    message.displayFrom !== "You"
+                                      ? {
+                                        position: "absolute",
+                                        bottom: "1rem",
+                                        right: "-4rem",
+                                      }
+                                      : {
+                                        position: "absolute",
+                                        bottom: "1rem",
+                                        left: "-4rem",
+                                      }
+                                  }
+                                  onClick={() => handleReplyTo(message)}
+                                >
+                                  <ReplyIcon />
+                                </button>
                               </div>
-                            )}
-                          </div>
-                        ))}
-                        <div ref={messagesEndRef} />
-                      </div>
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                      <div ref={messagesEndRef} />
                     </div>
                   </div>
-                )}
+                </div>
+              )}
 
-                {/* Chat Input */}
-                {appState === "chat" && (
-                  <div
-                    className="card"
-                    style={{ padding: "1rem", position: "relative" }}
-                  >
-                    {replyTarget && (
-                      <div className="reply-preview">
-                        Replying to{" "}
-                        {replyTarget.from === currentUsername
-                          ? "your message"
-                          : replyTarget.from}
-                        : {replyTarget.text.slice(0, 50)}...
-                        <button
-                          className="btn btn-ghost btn-icon"
-                          onClick={() => setReplyTarget(null)}
-                        >
-                          {/* Cancel icon */}X
-                        </button>
-                      </div>
-                    )}
-                    <div className="hidden sm:flex flex-row justify-center gap-[0.5rem]">
+              {/* Chat Input */}
+              {appState === "chat" && (
+                <div
+                  className="card"
+                  style={{ padding: "1rem", position: "relative" }}
+                >
+                  {replyTarget && (
+                    <div className="reply-preview">
+                      Replying to{" "}
+                      {replyTarget.from === currentUsername
+                        ? "your message"
+                        : replyTarget.from}
+                      : {replyTarget.text.slice(0, 50)}...
                       <button
+                        className="btn btn-ghost btn-icon"
+                        onClick={() => setReplyTarget(null)}
+                      >
+                        {/* Cancel icon */}X
+                      </button>
+                    </div>
+                  )}
+                  <div className="hidden sm:flex flex-row justify-center gap-[0.5rem]">
+                    <button
+                      className="btn btn-ghost btn-icon"
+                      onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                    >
+                      <Smile />
+                    </button>
+                    <input
+                      focus="true"
+                      ref={chatInputRef}
+                      className="input"
+                      style={{ flex: 1 }}
+                      value={inputValue}
+                      onChange={(e) => setInputValue(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") handleSend();
+                      }}
+                      placeholder="Type message (or /quit)"
+                    />
+                    <button className="btn btn-primary" onClick={handleSend}>
+                      <Send />
+                    </button>
+                  </div>
+
+                  <div className="flex flex-col sm:hidden  justify-center gap-[0.5rem]">
+                    <input
+                      focus="true"
+                      ref={chatInputRef}
+                      className="input"
+                      style={{ flex: 1 }}
+                      value={inputValue}
+                      onChange={(e) => setInputValue(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") handleSend();
+                      }}
+                      placeholder="Type message (or /quit)"
+                    />
+                    <div className="flex flex-row justify-center gap-[0.5rem]">
+                      <button
+                        ref={emojiPickerButtonRef}
                         className="btn btn-ghost btn-icon"
                         onClick={() => setShowEmojiPicker(!showEmojiPicker)}
                       >
                         <Smile />
                       </button>
-                      <input
-                        focus="true"
-                        ref={chatInputRef}
-                        className="input"
-                        style={{ flex: 1 }}
-                        value={inputValue}
-                        onChange={(e) => setInputValue(e.target.value)}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter") handleSend();
-                        }}
-                        placeholder="Type message (or /quit)"
-                      />
-                      <button className="btn btn-primary" onClick={handleSend}>
+                      <button
+                        className="btn btn-primary"
+                        onClick={handleSend}
+                      >
                         <Send />
                       </button>
                     </div>
+                  </div>
 
-                    <div className="flex flex-col sm:hidden  justify-center gap-[0.5rem]">
-                      <input
-                        focus="true"
-                        ref={chatInputRef}
-                        className="input"
-                        style={{ flex: 1 }}
-                        value={inputValue}
-                        onChange={(e) => setInputValue(e.target.value)}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter") handleSend();
+                  {/* Emoji Picker */}
+                  {showEmojiPicker && (
+                    <div className="emoji-picker" ref={emojiPickerRef}>
+                      <div
+                        style={{
+                          display: "grid",
+                          gridTemplateColumns: "repeat(5, 1fr)",
+                          gap: "0.5rem",
                         }}
-                        placeholder="Type message (or /quit)"
-                      />
-                      <div className="flex flex-row justify-center gap-[0.5rem]">
-                        <button
-                          ref={emojiPickerButtonRef}
-                          className="btn btn-ghost btn-icon"
-                          onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-                        >
-                          <Smile />
-                        </button>
-                        <button
-                          className="btn btn-primary"
-                          onClick={handleSend}
-                        >
-                          <Send />
-                        </button>
+                        className="max-h-36 overflow-auto"
+                      >
+                        {commonEmojis.map((emoji) => (
+                          <button
+                            key={emoji}
+                            className="btn btn-ghost"
+                            style={{
+                              height: "2rem",
+                              width: "2rem",
+                              padding: 0,
+                              justifyContent: "center",
+                            }}
+                            onClick={() => handleEmojiSelect(emoji)}
+                          >
+                            {emoji}
+                          </button>
+                        ))}
                       </div>
                     </div>
-
-                    {/* Emoji Picker */}
-                    {showEmojiPicker && (
-                      <div className="emoji-picker" ref={emojiPickerRef}>
-                        <div
-                          style={{
-                            display: "grid",
-                            gridTemplateColumns: "repeat(5, 1fr)",
-                            gap: "0.5rem",
-                          }}
-                          className="max-h-36 overflow-auto"
-                        >
-                          {commonEmojis.map((emoji) => (
-                            <button
-                              key={emoji}
-                              className="btn btn-ghost"
-                              style={{
-                                height: "2rem",
-                                width: "2rem",
-                                padding: 0,
-                                justifyContent: "center",
-                              }}
-                              onClick={() => handleEmojiSelect(emoji)}
-                            >
-                              {emoji}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
+                  )}
+                </div>
+              )}
             </div>
-          );
-        }
-
-        ReactDOM.render(<ChatApp />, document.getElementById("root"));
-      </script>
-
-      <script>
-        // Configuration – adjust only if you change the server path
-        const KEEP_ALIVE_URL = `${window.location.origin}/keep-alive`;
-        const INTERVAL_MS = 5 * 60 * 1000; // 5 minutes
-
-        // Simple fetch that ignores the response body
-        function pingKeepAlive() {
-          fetch(KEEP_ALIVE_URL, { method: "GET", cache: "no-store" })
-            .then(() => console.log("keep-alive ping sent"))
-            .catch((err) => console.warn("keep-alive ping failed", err));
-        }
-
-        // Start immediately and then repeat
-        pingKeepAlive();
-        const keepAliveInterval = setInterval(pingKeepAlive, INTERVAL_MS);
-
-        // Optional: clean up when the page unloads (good practice)
-        window.addEventListener("beforeunload", () =>
-          clearInterval(keepAliveInterval)
+          </div>
         );
-      </script>
-    </body>
+      }
+
+      ReactDOM.render(<ChatApp />, document.getElementById("root"));
+    </script>
+
+    <script>
+      // Configuration – adjust only if you change the server path
+      const KEEP_ALIVE_URL = `${window.location.origin}/keep-alive`;
+      const INTERVAL_MS = 5 * 60 * 1000; // 5 minutes
+
+      // Simple fetch that ignores the response body
+      function pingKeepAlive() {
+        fetch(KEEP_ALIVE_URL, { method: "GET", cache: "no-store" })
+          .then(() => console.log("keep-alive ping sent"))
+          .catch((err) => console.warn("keep-alive ping failed", err));
+      }
+
+      // Start immediately and then repeat
+      pingKeepAlive();
+      const keepAliveInterval = setInterval(pingKeepAlive, INTERVAL_MS);
+
+      // Optional: clean up when the page unloads (good practice)
+      window.addEventListener("beforeunload", () =>
+        clearInterval(keepAliveInterval)
+      );
+    </script>
+  </body>
+
   </html>
 </DOCUMENT>
